@@ -4,17 +4,19 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	//"os"
 	"strings"
 	"time"
 
 	//"github.com/dgrijalva/jwt-go"
+	uuid "github.com/aidarkhanov/nanoid/v2"
 	"github.com/davecgh/go-spew/spew"
 	log "github.com/sirupsen/logrus"
-	uuid "github.com/aidarkhanov/nanoid/v2"
+
 	//"github.com/google/uuid"
 	//"github.com/davecgh/go-spew/spew"
-	"gitlab.com/dhf0820/cerner_ca/pkg/storage"
+	"github.com/vsoftcorp/cernerFhir/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -25,24 +27,24 @@ import (
 // }
 
 type AuthSession struct {
-	ID        	primitive.ObjectID	`json:"_id" bson:"_id,omitempty"`
-	Status			Status			`json:"status" bson:"status"`
-	PatSessionId 	string          `json:"pat_session_id" bson:"pat_session_id"`
-	DocSessionId 	string			`json:"doc_session_id" bson:"doc_session_id"`
-	EncSessionId	string			`json:"enc_session_id" bson:"enc_session_id"`
-	SessionID  		string 			`json:"session_id" bson:"session_id"`
-	UserID 	  	primitive.ObjectID	`json:"user_id" bson:"user_id"`
-	UserName 		string			`json:"user_name" bson:"user_name"`
-	CurrentPatId 	string 		 	`json:"current_pat_id" bson:"current_pat_id"` //Keeps the current patient. If changes, start a new session, Delete old
-	ExpireAt  		int64			`json:"expireAt" bson:"expire_at"`
-	AccessedAt 		*time.Time		`json:"accessed_at" bson:"accessed_at"`
+	ID           primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
+	Status       Status             `json:"status" bson:"status"`
+	PatSessionId string             `json:"pat_session_id" bson:"pat_session_id"`
+	DocSessionId string             `json:"doc_session_id" bson:"doc_session_id"`
+	EncSessionId string             `json:"enc_session_id" bson:"enc_session_id"`
+	SessionID    string             `json:"session_id" bson:"session_id"`
+	UserID       primitive.ObjectID `json:"user_id" bson:"user_id"`
+	UserName     string             `json:"user_name" bson:"user_name"`
+	CurrentPatId string             `json:"current_pat_id" bson:"current_pat_id"` //Keeps the current patient. If changes, start a new session, Delete old
+	ExpireAt     int64              `json:"expireAt" bson:"expire_at"`
+	AccessedAt   *time.Time         `json:"accessed_at" bson:"accessed_at"`
 }
 
 type Status struct {
-	Diagnostic  string    `json:"diag" bson:"diag"`
-	Reference   string    `json:"ref" bson:"ref"`
-	Patient   	string    `json:"pat" bson:"pat"`
-	Encounter   string    `json:"enc" bson:"enc"`
+	Diagnostic string `json:"diag" bson:"diag"`
+	Reference  string `json:"ref" bson:"ref"`
+	Patient    string `json:"pat" bson:"pat"`
+	Encounter  string `json:"enc" bson:"enc"`
 }
 
 func ValidateSession(id string) (*AuthSession, error) {
@@ -56,7 +58,7 @@ func ValidateSession(id string) (*AuthSession, error) {
 		log.Errorf("ValidateSession:56 -- IDFromHex Error: %s", err.Error())
 	}
 	filter := bson.D{{"_id", ID}}
-	
+
 	collection, _ := storage.GetCollection("sessions")
 	as := &AuthSession{}
 	err = collection.FindOne(context.TODO(), filter).Decode(as)
@@ -73,7 +75,7 @@ func ValidateSession(id string) (*AuthSession, error) {
 	if tnow > as.ExpireAt {
 		return nil, errors.New("NotLoggedIn")
 	}
-	
+
 	as.UpdateSessionAccessedAt()
 	//fmt.Printf("\n\nValidate is returning session: %s\n", spew.Sdump(as))
 	return as, nil
@@ -96,25 +98,24 @@ func ValidateSession(id string) (*AuthSession, error) {
 // 		log.Error(msg)
 // 		return errors.New(msg)
 // 	}
-	
-// }
 
+// }
 
 func (as *AuthSession) CreateSession(userId primitive.ObjectID) error { // SessionID is provided
 	//as.SessionID = uuid.New()
-	if as.SessionID != ""{
+	if as.SessionID != "" {
 		as.Delete()
 	}
 
 	id, err := uuid.New()
-	if err!= nil {
+	if err != nil {
 		return fmt.Errorf("auth_session:95 -- Could not generate uuid: %s\n", err.Error())
 	}
 	//fmt.Printf("CreateSession:100 -- cheking if session exists: %s\n", spew.Sdump(as))
 	// as, err = ValidateAuth(as.Token)
 	// if err == nil {
 	// 	log.Infof("Session already exists for %s\n", as.Token)
-		
+
 	// 	as.UpdateSessionID()
 	// 	return nil //errors.New("Session already exsts")
 	// } else {
@@ -134,7 +135,7 @@ func (as *AuthSession) CreateSession(userId primitive.ObjectID) error { // Sessi
 	}
 	// filter := bson.D{{"token", as.Token}}
 	// collection, _ := storage.GetCollection("sessions")
-	
+
 	// err = collection.FindOne(context.TODO(), filter).Decode(&as)
 	// if err != nil {
 	// 	fmt.Printf("Create:82 - FindFilter: %s - Err:%s\n", as.Token, err.Error())
@@ -143,7 +144,7 @@ func (as *AuthSession) CreateSession(userId primitive.ObjectID) error { // Sessi
 	return nil
 }
 
-func (as *AuthSession)Delete() error {
+func (as *AuthSession) Delete() error {
 	startTime := time.Now()
 	collection, _ := storage.GetCollection("sessions")
 	filter := bson.D{{"sessionid", as.SessionID}}
@@ -163,13 +164,13 @@ func CreateSessionForUser(user *User) (*AuthSession, error) {
 	filter := bson.D{{"user_id", userID}}
 	collection, _ := storage.GetCollection("sessions")
 	as := &AuthSession{}
-	err := collection.FindOne(context.TODO(), filter).Decode(as)  // See if the user already has a session
-	if err == nil { // The user has a session, keep using it
-		as.UpdateSessionAccessedAt()  // Extend the current session
-		return as, nil 
+	err := collection.FindOne(context.TODO(), filter).Decode(as) // See if the user already has a session
+	if err == nil {                                              // The user has a session, keep using it
+		as.UpdateSessionAccessedAt() // Extend the current session
+		return as, nil
 	}
 	// Create a new Session
-	as.UserID = userID 
+	as.UserID = userID
 	as.UserName = user.UserName
 	err = as.Insert()
 	if err != nil {
@@ -180,20 +181,16 @@ func CreateSessionForUser(user *User) (*AuthSession, error) {
 	return as, nil
 }
 
-
-
-
 func GetSessionForUserID(userID primitive.ObjectID) (*AuthSession, error) {
 	filter := bson.D{{"user_id", userID}}
 	collection, _ := storage.GetCollection("sessions")
 	as := &AuthSession{}
-	err := collection.FindOne(context.TODO(), filter).Decode(as)  // See if the user already has a session
+	err := collection.FindOne(context.TODO(), filter).Decode(as) // See if the user already has a session
 	return as, err
 }
 
-
 func ValidateAuth(token string) (*AuthSession, error) {
-//TODO: Actually validate the session as a valid JWT. Right now just using
+	//TODO: Actually validate the session as a valid JWT. Right now just using
 
 	if strings.Trim(token, " ") == "" {
 		log.Error("auth_session:187 - token is blank")
@@ -279,7 +276,7 @@ func (as *AuthSession) Update(update bson.M) (*AuthSession, error) {
 	_, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		log.Errorf("AuthSession.Update:272 error %s", err)
-		return nil,  err
+		return nil, err
 	}
 	//log.Debugf("AuthSession.Update:275 -- Matched: %d  -- modified: %d for ID: %s", res.MatchedCount, res.ModifiedCount, as.ID.String())
 
@@ -345,11 +342,11 @@ func (as *AuthSession) UpdateEncSessionId() (*AuthSession, error) {
 	fmt.Printf("AuthSession.UpEncSessionId:348 --Entry: %s\n", spew.Sdump(as))
 
 	id, err := uuid.New()
-	if err!= nil {
+	if err != nil {
 		return nil, fmt.Errorf("AuthSession.UpdateEncSessionId:352 -- Could not generate Enc uuid: %s", err.Error())
 	}
 	update := bson.M{"$set": bson.M{"enc_session_id": id}}
-	if err!= nil {
+	if err != nil {
 		return nil, fmt.Errorf("AuthSession.UpdatEncSessionId:291 -- Cound not set EncSessionID uuid: %s", err.Error())
 	}
 	fmt.Printf("AuthSession.UpdatEncSessionId:293 -- %s\n", spew.Sdump(as))
@@ -358,16 +355,15 @@ func (as *AuthSession) UpdateEncSessionId() (*AuthSession, error) {
 	return asUpd, err
 }
 
-
 func (as *AuthSession) UpdatePatSessionId() (*AuthSession, error) {
 	fmt.Printf("AuthSession.UpdatePatSessionId:366 --Entry: %s\n", spew.Sdump(as))
 
 	id, err := uuid.New()
-	if err!= nil {
+	if err != nil {
 		return nil, fmt.Errorf("AuthSession.UpdatePatSessionId:287 -- Cound not generate Pat uuid: %s", err.Error())
 	}
 	update := bson.M{"$set": bson.M{"pat_session_id": id}}
-	if err!= nil {
+	if err != nil {
 		return nil, fmt.Errorf("AuthSession.UpdatePatSessionId:291 -- Cound not set PatSessionID uuid: %s", err.Error())
 	}
 	fmt.Printf("AuthSession.UpdatePatSessionId:293 -- %s\n", spew.Sdump(as))
@@ -379,23 +375,23 @@ func (as *AuthSession) UpdatePatSessionId() (*AuthSession, error) {
 func (as *AuthSession) UpdateDocSessionId() (*AuthSession, error) {
 	fmt.Printf("AuthSession.UpdateDocSessionId:383 --Entry: %s\n", spew.Sdump(as))
 	id, err := uuid.New()
-	if err!= nil {
+	if err != nil {
 		return nil, fmt.Errorf("auth_session.UpdateDocId:302 -- Cound not generate Doc uuid: %s", err.Error())
 	}
 	update := bson.M{"$set": bson.M{"doc_session_id": id}}
-	if err!= nil {
+	if err != nil {
 		return nil, fmt.Errorf("AuthSession.UpdateDocSessionId:306 -- Cound not set DocSessionID uuid: %s", err.Error())
 	}
 	return as.Update(update)
 }
 
-func (as *AuthSession) UpdateSessionID() (*AuthSession, error){
-	id,err := uuid.New()
-	if err!= nil {
+func (as *AuthSession) UpdateSessionID() (*AuthSession, error) {
+	id, err := uuid.New()
+	if err != nil {
 		return nil, fmt.Errorf("AuthSession.UpdateSessionId:314 -- Cound not generate uuid: %s", err.Error())
 	}
 	update := bson.M{"$set": bson.M{"session_id": id}}
-	return as.Update(update )
+	return as.Update(update)
 
 	// collection, _ := storage.GetCollection("sessions")
 	// res, err := collection.UpdateOne(context.TODO(), filter, update)
@@ -407,37 +403,36 @@ func (as *AuthSession) UpdateSessionID() (*AuthSession, error){
 	//return nil
 }
 
-
 func (as *AuthSession) CalculateExpireTime() int64 {
 	loc, _ := time.LoadLocation("UTC")
 	addlTime := time.Hour * 2
-	ExpireAt := time.Now().In(loc).Add(addlTime ).Unix() 
+	ExpireAt := time.Now().In(loc).Add(addlTime).Unix()
 	return ExpireAt
 }
 
 func (as *AuthSession) GetDocumentStatus() string {
-	latest,_ := GetSessionForUserID(as.UserID)
-	if latest.Status.Diagnostic == "filling" ||latest.Status.Reference == "filling" {
+	latest, _ := GetSessionForUserID(as.UserID)
+	if latest.Status.Diagnostic == "filling" || latest.Status.Reference == "filling" {
 		return "filling"
 	}
 	return "done"
 }
 
 func (as *AuthSession) GetDiagReptStatus() string {
-	latest,_ := GetSessionForUserID(as.UserID)
+	latest, _ := GetSessionForUserID(as.UserID)
 	return latest.Status.Diagnostic
 }
 
 func (as *AuthSession) GeReptRefStatus() string {
-	latest,_ := GetSessionForUserID(as.UserID)
+	latest, _ := GetSessionForUserID(as.UserID)
 	return latest.Status.Reference
 }
 func (as *AuthSession) GetPatientStatus() string {
-	latest,_ := GetSessionForUserID(as.UserID)
+	latest, _ := GetSessionForUserID(as.UserID)
 	return latest.Status.Patient
 }
 
 func (as *AuthSession) GetEncounterStatus() string {
-	latest,_ := GetSessionForUserID(as.UserID)
+	latest, _ := GetSessionForUserID(as.UserID)
 	return latest.Status.Encounter
 }

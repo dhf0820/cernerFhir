@@ -13,10 +13,10 @@ import (
 	"github.com/gorilla/schema"
 	log "github.com/sirupsen/logrus"
 
-	//"gitlab.com/dhf0820/cerner_ca/pkg/common"
-	m "gitlab.com/dhf0820/cerner_ca/pkg/model"
-	fhir "gitlab.com/dhf0820/fhirongo"
-	//fhir "gitlab.com/dhf0820/fhirongo"
+	//"github.com/vsoftcorp/cernerFhir/pkg/common"
+	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
+	m "github.com/vsoftcorp/cernerFhir/pkg/model"
+	//fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
 )
 
 //"gopkg.in/mgo.v2/bson"
@@ -39,21 +39,21 @@ type PatientRawCaResponse struct {
 	Patient  *m.CAPatient   `json:"patient"`
 }
 type PatientCaResponse struct {
-	StatusCode   int                `json:"status_code"`
-	Message      string             `json:"message"`
-	CacheStatus  string 		    `json:"cache_status"`
-	Total        int64              `json:"total_documents"`
-	PagesInCache int64              `json:"pages_in_cache"`
-	NumberInPage int                `json:"num_in_page"`
-	Page         int                `json:"page"`
-	SessionId    string             `json:"session_id"`
-	Token 		 string 			`json:"token"`
+	StatusCode   int            `json:"status_code"`
+	Message      string         `json:"message"`
+	CacheStatus  string         `json:"cache_status"`
+	Total        int64          `json:"total_documents"`
+	PagesInCache int64          `json:"pages_in_cache"`
+	NumberInPage int            `json:"num_in_page"`
+	Page         int            `json:"page"`
+	SessionId    string         `json:"session_id"`
+	Token        string         `json:"token"`
 	Patients     []*m.CAPatient `json:"patients"`
 	Patient      *m.CAPatient   `json:"patient"`
 }
 type PatientSummaryResponse struct {
-	Code     int              `json:"code"`
-	Message  string           `json:"status"`
+	Code     int          `json:"code"`
+	Message  string       `json:"status"`
 	Patients []*m.Patient `json:"patients"`
 	Patient  *m.Patient   `json:"patient"`
 }
@@ -63,7 +63,6 @@ type PatientEncounterResponse struct {
 	// Status     string            `json:"status"`
 	Data []*m.Encounter `json:"data"`
 }
-
 
 func WritePatientResponse(w http.ResponseWriter, statusCode int, resp *PatientResponse) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -204,7 +203,7 @@ func SearchCaPatient(w http.ResponseWriter, r *http.Request) {
 		if pf.Page == 0 {
 			pf.Page = 1
 		}
-		if pf.Cache != "reset"  { // Reset the cache based upon the cullent filters
+		if pf.Cache != "reset" { // Reset the cache based upon the cullent filters
 			fmt.Printf("\n\n\n   ### Requesting cached page %d\n", pf.Page)
 			caPats, numberInPage, pagesInCache, totalInCache, err := pf.GetPatientPage()
 			if err != nil {
@@ -220,7 +219,7 @@ func SearchCaPatient(w http.ResponseWriter, r *http.Request) {
 			caResp.PagesInCache = pagesInCache
 			caResp.Total = totalInCache
 			WritePatientCaResponse(w, &caResp)
-			return 
+			return
 		}
 		log.Debugf("SearchCaPatients:223 - calling CaPatientSearch to fill the cache")
 		pfs, err := pf.Session.UpdatePatSessionId()
@@ -364,7 +363,7 @@ func GetPatient(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Mode: %s,  ResultFormat: %s, RESULTFORMAT: %s\n",
 		pf.Mode, r.Header.Get("ResultFormat"), r.Header.Get("RESULTFORMAT"))
 	// if pf.Mode == "ca" || r.Header.Get("ResultFormat") == "ca" || r.Header.Get("ResultFormat") == "" {
-		
+
 	// 	caResp := PatientRawCaResponse{}
 	// 	caResp.Patient = nil //model.FhirPatientToCA(patient)
 	// 	WritePatientRawCaResponse(w, 200, &caResp)
@@ -474,7 +473,6 @@ func GetPatient(w http.ResponseWriter, r *http.Request) {
 // 	return tokenCookie, nil
 // }
 
-
 func SetupPatientFilter(r *http.Request) (*m.PatientFilter, error) {
 	config := m.ActiveConfig()
 	var decoder = schema.NewDecoder()
@@ -562,12 +560,11 @@ func SetupPatientFilter(r *http.Request) (*m.PatientFilter, error) {
 
 	if r.Header.Get("ResultFormat") != "" {
 		patientFilter.ResultFormat = r.Header.Get("ResultFormat")
-	} else if r.Header.Get("RESULTFORMAT") != ""{
+	} else if r.Header.Get("RESULTFORMAT") != "" {
 		patientFilter.ResultFormat = r.Header.Get("RESULTFORMAT")
 	} else {
-		patientFilter.ResultFormat = "ca"  //Default to ca-ChartArchive
+		patientFilter.ResultFormat = "ca" //Default to ca-ChartArchive
 	}
-
 
 	return &patientFilter, nil
 }

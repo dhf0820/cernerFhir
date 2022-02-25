@@ -9,8 +9,8 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/dhf0820/cerner_ca/pkg/storage"
-	fhir "gitlab.com/dhf0820/fhirongo"
+	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
+	"github.com/vsoftcorp/cernerFhir/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -61,21 +61,21 @@ type EncounterSummary struct {
 }
 
 type EncounterFilter struct {
-	Skip          int64    `schema:"skip"`
-	Page          int64    `schema:"page"`
-	PageStr       string   `schema:"page_str"`
-	Limit         int64    `schema:"limit"`
-	SortBy        []string `schema:"column"`
-	Order         string   `schema:"order"`
-	Mode          string   `schema:"mode"`
-	ResultFormat  string
-	Count         string
-	UseCache      string `schema:"useCashe"`
-	FillCache     string `schema:"fillCache"`
-	Cache         string `schema:"cache"` // reset, stats
-	Session       *AuthSession
-	SessionId     string `schema:"session_id"`
-	UserId        string
+	Skip         int64    `schema:"skip"`
+	Page         int64    `schema:"page"`
+	PageStr      string   `schema:"page_str"`
+	Limit        int64    `schema:"limit"`
+	SortBy       []string `schema:"column"`
+	Order        string   `schema:"order"`
+	Mode         string   `schema:"mode"`
+	ResultFormat string
+	Count        string
+	UseCache     string `schema:"useCashe"`
+	FillCache    string `schema:"fillCache"`
+	Cache        string `schema:"cache"` // reset, stats
+	Session      *AuthSession
+	SessionId    string `schema:"session_id"`
+	UserId       string
 	//AccessDetails *AccessDetails
 
 	EncounterID string `schema:"id"`
@@ -83,14 +83,13 @@ type EncounterFilter struct {
 	//MRN           string `schema:"mrn"`
 	//EnterpriseID  string `schema:"enterpise_id"`
 	// Encounter     string `schema:"encounter"`
-	AccountNumber string `schema:"accountnumber"`
-	Class         string `schema:"class"`
+	AccountNumber    string `schema:"accountnumber"`
+	Class            string `schema:"class"`
 	FhirQueryString  string
 	CacheQueryFilter bson.M
 }
 
 var fhirC *fhir.Connection
-
 
 func (ef *EncounterFilter) SearchEncounters() ([]*fhir.Encounter, error) {
 	//activeEncounterFilter = ef
@@ -113,7 +112,7 @@ func (ef *EncounterFilter) SearchEncounters() ([]*fhir.Encounter, error) {
 		return nil, err
 
 	}
-	if len(encounters) == 0{
+	if len(encounters) == 0 {
 		err = fmt.Errorf("no encounters found for: %s", ef.FhirQueryString)
 	}
 	return encounters, err
@@ -168,7 +167,6 @@ func (ef *EncounterFilter) FollowNextFhirEncLinks(links []fhir.Link) {
 
 			//ef.Session.UpdateEncStatus("done")
 
-
 			log.Info("CachePages for url is blank, done")
 			break
 		}
@@ -178,7 +176,7 @@ func (ef *EncounterFilter) FollowNextFhirEncLinks(links []fhir.Link) {
 		url = NextPageLink(links)
 	}
 
-	ef.Session.UpdateEncStatus( "done")
+	ef.Session.UpdateEncStatus("done")
 
 }
 
@@ -233,8 +231,6 @@ func InsertFhirEnc(enc *fhir.Encounter, sessionId string) error {
 	// }
 	return err
 }
-
-
 
 func GetFhirEncounter(id string) (*fhir.Encounter, error) {
 	fmt.Printf("GetFhirEncounter:239 -- ID: %s\n", id)
@@ -386,8 +382,8 @@ func (ef *EncounterFilter) GetFhirEncounterPage() ([]*fhir.Encounter, int64, int
 	const ASC = 1
 	mq := []bson.M{}
 	//mq = append(mq, bson.M{"session_id": ef.Session.EncSessionId})
-	mq = append(mq, bson.M{"patient.reference": "Patient/"+ef.PatientID})
-	filter :=  bson.M{"$and": mq}
+	mq = append(mq, bson.M{"patient.reference": "Patient/" + ef.PatientID})
+	filter := bson.M{"$and": mq}
 	//fmt.Printf("GetFhirEncounterPage:391 -- EncounterFilter: %s\n", spew.Sdump(ef))
 
 	if ef.Limit > 0 {
@@ -414,7 +410,7 @@ func (ef *EncounterFilter) GetFhirEncounterPage() ([]*fhir.Encounter, int64, int
 	if strings.ToLower(ef.Order) == "desc" {
 		sortOrder = DESC
 	}
-	sortFields = append(sortFields, bson.E{Key:"id", Value:sortOrder})
+	sortFields = append(sortFields, bson.E{Key: "id", Value: sortOrder})
 	findOptions.SetSort(sortFields)
 	log.Debugf("GetFhirEncounterPage:439 - sortFields: %s", sortFields)
 	collection, _ := storage.GetCollection("encounters")
@@ -426,7 +422,7 @@ func (ef *EncounterFilter) GetFhirEncounterPage() ([]*fhir.Encounter, int64, int
 		msg := fmt.Sprintf("GetFhirEncounterPage:447 -  Query for %s returned error: %s\n", filter, err.Error())
 		log.Error(msg)
 		//cursor is not open
-		return nil, 0, 0, 0,"", errors.New(msg)
+		return nil, 0, 0, 0, "", errors.New(msg)
 	}
 	log.Printf("GetFhirEncounterPage:450 - took %f seconds\n", time.Since(startTime).Seconds())
 
@@ -470,7 +466,7 @@ func (ef *EncounterFilter) FhirEncounterCacheStats() (int64, int64, string, erro
 	// 	msg := fmt.Sprintf("EncounterCacheStats:496 -- err: %s", err.Error())
 	// 	return 0, 0, errors.New(msg)
 	// }
-	numPages, totalInCache,cacheStatus, err := ef.FhirEncounterPagesInCache()
+	numPages, totalInCache, cacheStatus, err := ef.FhirEncounterPagesInCache()
 	if err != nil {
 		msg := fmt.Sprintf("EncounterCacheStats:501 -- err: %s", err.Error())
 		return 0, 0, "", errors.New(msg)
@@ -497,8 +493,8 @@ func (ef *EncounterFilter) FhirEncountersInCache() (int64, string, error) {
 	//filter := bson.M{"$and": mq}
 	mq := []bson.M{}
 	//mq = append(mq, bson.M{"session_id": ef.Session.EncSessionId})
-	mq = append(mq, bson.M{"patient.reference": "Patient/"+ef.PatientID})
-	filter :=  bson.M{"$and": mq}
+	mq = append(mq, bson.M{"patient.reference": "Patient/" + ef.PatientID})
+	filter := bson.M{"$and": mq}
 
 	c, err := storage.GetCollection("encounters")
 	if err != nil {
@@ -515,7 +511,6 @@ func (ef *EncounterFilter) FhirEncountersInCache() (int64, string, error) {
 	cacheStatus := ef.Session.GetEncounterStatus()
 	return count, cacheStatus, nil
 }
-
 
 //Get Chached entries first. If none, get them from FHIR
 // func getCachedEncounters(filter bson.M) ([]*Encounter, error) {

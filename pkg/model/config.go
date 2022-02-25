@@ -3,15 +3,16 @@ package model
 import (
 	"fmt"
 	//"github.com/joho/godotenv"
-	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+
 	//"os"
 	"github.com/gorilla/mux"
-	fhir "gitlab.com/dhf0820/fhirongo"
+	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	//"github.com/jingweno/conf"
@@ -19,7 +20,7 @@ import (
 	//"gopkg.in/mgo.v2"
 	//"net"
 
-	"gitlab.com/dhf0820/cerner_ca/pkg/storage"
+	"github.com/vsoftcorp/cernerFhir/pkg/storage"
 	//"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

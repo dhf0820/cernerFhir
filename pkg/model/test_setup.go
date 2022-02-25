@@ -4,14 +4,14 @@ import (
 	//"fmt"
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
-	//m "gitlab.com/dhf0820/cerner_ca/pkg/model"
+	//m "github.com/vsoftcorp/cernerFhir/pkg/model"
 	//"os"
 )
 
 //TODO: Not sure we watn to initialize everything for Testing. No reason to start listening
 func setupTest(token string) *AuthSession {
 	godotenv.Load("env_test")
-	
+
 	InitializeAll("")
 	asId, err := Login("test", "password")
 	if err != nil {
@@ -29,7 +29,7 @@ func setupTest(token string) *AuthSession {
 	// if err != nil {
 	// 	fmt.Printf("CreateSession Failed: %s\n", err.Error())
 	// }
-	as, err :=ValidateSession(asId)
+	as, err := ValidateSession(asId)
 	if err != nil {
 		log.Panicf("Could not validate new session")
 	}
@@ -61,7 +61,6 @@ func setupTest(token string) *AuthSession {
 // 		log.Panic("TestGetMetaData error")
 // 	}
 // 	//ad.TokenStr = tokenStr
-	
+
 // 	return ad
 // }
-

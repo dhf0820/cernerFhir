@@ -11,7 +11,7 @@ import (
 	//"io/ioutil"
 	//"encoding/json"
 	//"time"
-	fhir "gitlab.com/dhf0820/fhirongo"
+	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
 )
 
 //Patient contains the cached and returned information for one patient
@@ -42,9 +42,7 @@ func RetrieveImage(docId string) (*Image, error) {
 	image.Meta = fImage.Meta
 	image.ResourceType = fImage.ResourceType
 	return &image, nil
-	
 
-	
 	//url := fmt.Sprintf("%s%s", ActiveConfig().ImageURL(), i.URL)
 
 	// fmt.Printf("Looking for Document: %s\n", docId)

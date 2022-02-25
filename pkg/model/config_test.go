@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	//mongo "gitlab.com/dhf0820/cerner_ca/pkg/storage"
+	//mongo "github.com/vsoftcorp/cernerFhir/pkg/storage"
 	//"github.com/davecgh/go-spew/spew"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -18,9 +18,9 @@ func TestInitConfig(t *testing.T) {
 			mode := "dev"
 			//mongoURL := "mongodb://dhf:Sacj0nhat1@linode.ihids.com:27017/?serverSelectionTimeoutMS=5000&connectTimeoutMS=10000&authSource=admin&authMechanism=SCRAM-SHA-256"
 			mongoURL := "mongodb+srv://dhfadmin:Sacj0nhati@cluster1.24b12.mongodb.net/fhir?retryWrites=true&w=majority"
-			
-			config := initConfig(name , mode, mongoURL)
-		
+
+			config := initConfig(name, mode, mongoURL)
+
 			//Convey("There should be an active Configuration", func() {
 			So(config, ShouldNotEqual, nil)
 			//fmt.Printf("Config: %s\n", spew.Sdump(config))

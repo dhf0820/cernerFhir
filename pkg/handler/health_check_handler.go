@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 
-	//m "gitlab.com/dhf0820/cerner_ca/pkg/model"
+	//m "github.com/vsoftcorp/cernerFhir/pkg/model"
 
 	//"gopkg.in/mgo.v2/bson"
 	"net/http"
 
-	m "gitlab.com/dhf0820/cerner_ca/pkg/model"
+	m "github.com/vsoftcorp/cernerFhir/pkg/model"
 	//"strconv"
 	//"strings"
 	//"time"

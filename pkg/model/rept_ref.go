@@ -1,6 +1,5 @@
 package model
 
-
 import (
 	//"bytes"
 	"context"
@@ -18,25 +17,20 @@ import (
 	"github.com/davecgh/go-spew/spew"
 
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/dhf0820/cerner_ca/pkg/storage"
-	fhir "gitlab.com/dhf0820/fhirongo"
+	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
+	"github.com/vsoftcorp/cernerFhir/pkg/storage"
+
 	// "go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	// "go.mongodb.org/mongo-driver/mongo"
 	// "go.mongodb.org/mongo-driver/mongo/options"
 )
 
-
-
-
 /////////////////////////////////////////////////////////////////////////////////////////
 //                                  Handle CA                                       /
 /////////////////////////////////////////////////////////////////////////////////////////
 // SearchCAReports: Find and cache CA version of FhirDiagnosticReports and Find and
 // cache CA version of FhirDocumentReferences returning requested page of the combined
-
-
-
 
 // func (df *DocumentFilter) GetCaDocumentReferences() ([]*CADocument, error) {
 // 	fhirDocRefs, err := df.GetFhirDocRefs()
@@ -47,9 +41,8 @@ import (
 // 	return caDocRefs, err
 // }
 
-
 //Does not return anything. THis just fills the cache if necessary
-func (df *DocumentFilter) GetFhirDocRefs()  {
+func (df *DocumentFilter) GetFhirDocRefs() {
 	//fmt.Printf("\n\n////////////////////////  GetFhirDocRefs ////////////////////////////////\n")
 	// c := config.Fhir()
 	log.Debugf("FindFhirDocRefs is searching DocumentReferences for Patient: %s", df.PatientGPI)
@@ -72,7 +65,7 @@ func (df *DocumentFilter) GetFhirDocRefs()  {
 	// 	// return fhirDocs, err
 	// }
 	//if cacheStatus =="done" and nothing in cache, start caching
-	
+
 	df.CacheFhirDocRefs()
 	fmt.Printf("GetFhirDocRefs:76 -- CacheFhirDocRef returned\n")
 
@@ -92,7 +85,7 @@ func (df *DocumentFilter) CacheFhirDocRefs() {
 	// fmt.Printf("FindDocumentReferences returned\n")
 	if err != nil {
 		log.Errorf("c.FindDocumentReferences err: %s", err.Error())
-		return 
+		return
 	}
 	// fmt.Printf("CacheFhirDocRefs:94 -- FHIR returned results: %s\n", spew.Sdump(results))
 	// fmt.Printf("\n\n\n###rept_ref:95 -- calling FollowNextRefLink: %s\n", spew.Sdump(results.Link))
@@ -122,8 +115,6 @@ func (df *DocumentFilter) CacheFhirDocRefs() {
 		return
 	}
 }
-
-
 
 // func (df *DocumentFilter) FhirDocRefsToCADocuments(fds []*fhir.DocumentReference) ([]*CADocument, error) {
 // 	caDocuments := []*CADocument{}
@@ -181,7 +172,6 @@ func (df *DocumentFilter) CacheFhirDocRefs() {
 //                              Process Next Set of DiagRepts returned from  FHIR                     //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 func (df *DocumentFilter) FollowNextRefLinks(links []fhir.Link) {
 	//fmt.Printf("\n\n\n### FollowNextRefLinks:186")
 	// df.Session.Status.Reference = "filling"
@@ -192,9 +182,9 @@ func (df *DocumentFilter) FollowNextRefLinks(links []fhir.Link) {
 	for {
 		startTime := time.Now()
 		if url == "" {
-			log.Info("CachePages for url is blank, done")			
-		 	df.Session.Status.Reference = "done"
-			df.Session.UpdateRefStatus( "done")
+			log.Info("CachePages for url is blank, done")
+			df.Session.Status.Reference = "done"
+			df.Session.UpdateRefStatus("done")
 			break
 		}
 		//TODO: Get the next page and start its next page while processing current. Do in paraallel
@@ -205,7 +195,7 @@ func (df *DocumentFilter) FollowNextRefLinks(links []fhir.Link) {
 		url = NextRefPageLink(links)
 	}
 	df.Session.Status.Reference = "done"
-	df.Session.UpdateRefStatus( "done")
+	df.Session.UpdateRefStatus("done")
 }
 
 func NextRefPageLink(links []fhir.Link) string {
@@ -223,7 +213,7 @@ func NextRefPageLink(links []fhir.Link) string {
 func (df *DocumentFilter) ProcessRefPage(url string) ([]fhir.Link, error) {
 	//fmt.Printf("\n\n\n###ProcessDiagPage:1998\n\n")
 	//startTime := time.Now()
-	
+
 	results, err := fhirC.NextFhirDocRefs(url)
 	if err != nil {
 		log.Errorf("NextFHIRDocRefs returned err: %s\n", err.Error())
@@ -231,7 +221,7 @@ func (df *DocumentFilter) ProcessRefPage(url string) ([]fhir.Link, error) {
 	}
 
 	// for _, entry := range results.Entry {
-	
+
 	// 	doc := entry.Document
 	// 	doc.FullURL = entry.FullURL
 	// 	err := InsertFhirDocument(&doc, df.Session.DocSessionId)
@@ -248,7 +238,7 @@ func (df *DocumentFilter) ProcessRefPage(url string) ([]fhir.Link, error) {
 	for _, r := range entry {
 		rpt := r.Document
 		rpt.FullURL = r.FullURL
-	
+
 		InsertFhirDoc(&rpt, df.Session.DocSessionId)
 		docs = append(docs, &rpt)
 	}
@@ -318,12 +308,13 @@ func InsertFhirDocRef(docRef *fhir.DocumentReference, sessionId string) error {
 			msg := fmt.Sprintf("InsertDocRefCache error: %s", err.Error())
 			log.Error(msg)
 			return errors.New(msg)
-		}else {
+		} else {
 			err = nil
 		}
 	}
 	return err
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                 CA DocumentReference Handlers                                    //
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -341,7 +332,6 @@ func InsertFhirDocRef(docRef *fhir.DocumentReference, sessionId string) error {
 // 	return caDocuments
 // }
 
-
 /////////////////////////////////////////////////////////////////////////////////////////
 //                                 FHIR Getters                                         /
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -349,7 +339,7 @@ func InsertFhirDocRef(docRef *fhir.DocumentReference, sessionId string) error {
 func GetRefImageURL(fdr *fhir.DocumentReference, imageType string) string {
 	for _, attachment := range fdr.PresentedForm {
 		//attachment := cnt.Attachment
-		if  attachment.ContentType == "application/pdf" {
+		if attachment.ContentType == "application/pdf" {
 			return attachment.URL
 		} else {
 			log.Warnf("Other attachment types for %s : %s", fdr.ID, spew.Sdump(attachment))

@@ -13,16 +13,16 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
 	//"github.com/dgrijalva/jwt-go"
 	"github.com/davecgh/go-spew/spew"
 
 	log "github.com/sirupsen/logrus"
 
-	//"gitlab.com/dhf0820/cerner_ca/pkg/storage"
-	fhir "gitlab.com/dhf0820/fhirongo"
+	//"github.com/vsoftcorp/cernerFhir/pkg/storage"
+	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
 	//"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-
 	//"go.mongodb.org/mongo-driver/mongo"
 	//"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -41,7 +41,6 @@ type CaResults struct {
 }
 
 type DocumentSummary struct {
-
 	CacheID      primitive.ObjectID `json:"cache_id" bson:"_id,omitempty"`
 	SessionID    string             `json:"-"`
 	PatientID    string             `json:"patient_id" bson:"patient_id"`
@@ -74,27 +73,27 @@ type DocumentSummary struct {
 }
 
 type CADocument struct {
-	CacheID 	 primitive.ObjectID `json:"-" bson:"_id,omitempty"`
-	SessionId    string     `json:"-" bson:"session_id"`
-	ID           string     `json:"document_id" bson:"document_id"`
-	VersionID    uint64     `json:"version_id" bson:"version_id"`
-	Encounter    string     `json:"visit_num" bson:"visit_num"`
-	Repository   string     `json:"repository" bson:"repository"`
-	Category 	 string 	`json:"category" bson:"category"`
-	Class 		 string 	`json:"class" bson:"class"`
-	Source       string     `json:"source" bson:"source"`
-	Description  string     `json:"description" bson:"description"`
-	ImageURL     string     `json:"image_url" bson:"image_url"`
-	Pages        int        `json:"pages" bson:"pages"`
-	ReptDateTime *time.Time `json:"rept_datetime" bson:"rept_datetime"`
-	Subtitle     string     `json:"subtitle" bson:"subtitle"`
-	PatientGPI   string     `json:"patient_gpi" bson:"patient_gpi"`
-	Text         string     `json:"text" bson:"text"`
-	Type 		 string 	`json:"type" bson:"type"`
-	DocStatus 	 string 	`json:"doc_status" bson:"doc_status"`
-	CreatedAt    *time.Time `json:"-" bson:"created_at"`
-	UpdatedAt    *time.Time `json:"-" bson:"updated_at"`
-	AccessedAt   *time.Time `json:"-" bson:"accessed_at"`
+	CacheID      primitive.ObjectID `json:"-" bson:"_id,omitempty"`
+	SessionId    string             `json:"-" bson:"session_id"`
+	ID           string             `json:"document_id" bson:"document_id"`
+	VersionID    uint64             `json:"version_id" bson:"version_id"`
+	Encounter    string             `json:"visit_num" bson:"visit_num"`
+	Repository   string             `json:"repository" bson:"repository"`
+	Category     string             `json:"category" bson:"category"`
+	Class        string             `json:"class" bson:"class"`
+	Source       string             `json:"source" bson:"source"`
+	Description  string             `json:"description" bson:"description"`
+	ImageURL     string             `json:"image_url" bson:"image_url"`
+	Pages        int                `json:"pages" bson:"pages"`
+	ReptDateTime *time.Time         `json:"rept_datetime" bson:"rept_datetime"`
+	Subtitle     string             `json:"subtitle" bson:"subtitle"`
+	PatientGPI   string             `json:"patient_gpi" bson:"patient_gpi"`
+	Text         string             `json:"text" bson:"text"`
+	Type         string             `json:"type" bson:"type"`
+	DocStatus    string             `json:"doc_status" bson:"doc_status"`
+	CreatedAt    *time.Time         `json:"-" bson:"created_at"`
+	UpdatedAt    *time.Time         `json:"-" bson:"updated_at"`
+	AccessedAt   *time.Time         `json:"-" bson:"accessed_at"`
 	//Text         fhir.TextData `json:"text"`
 }
 
@@ -113,7 +112,7 @@ type DocumentImage struct {
 
 //var activeDocumentFilter *DocumentFilter
 
-func (df *DocumentFilter) FindFhirDiagRepts()  {
+func (df *DocumentFilter) FindFhirDiagRepts() {
 	fmt.Printf("####################FindFhirDiagReports is searching DiagnosticReports for Patient: %s#############\n", df.PatientGPI)
 	_, _, totalInCache, _ := df.DocumentCacheStats()
 	cacheStatus := df.Session.GetDiagReptStatus()
@@ -161,22 +160,19 @@ func (df *DocumentFilter) CacheFhirDiagRepts() {
 	for _, r := range entry {
 		rpt := r.Document
 		rpt.FullURL = r.FullURL
-	
+
 		InsertFhirDoc(&rpt, df.Session.DocSessionId)
 		docs = append(docs, &rpt)
 	}
 	fmt.Printf("### CacheDiagRepts Initially found %d diagrpts and returning ###\n", len(docs))
-	return 
+	return
 }
 
-
 /////////////////////////////////Cache FHIR  Diagnostic Report Methods  ////////////////////////////
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                              Process Next Set of DiagRepts returned from  FHIR                     //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 func (df *DocumentFilter) FollowDiagNextLinks(links []fhir.Link) {
 	// df.Session.UpdateDiagStatus("filling")
@@ -200,7 +196,7 @@ func (df *DocumentFilter) FollowDiagNextLinks(links []fhir.Link) {
 		url = NextDiagPageLink(links)
 	}
 	df.Session.Status.Diagnostic = "done"
-	df.Session.UpdateDiagStatus( "done")
+	df.Session.UpdateDiagStatus("done")
 }
 
 func NextDiagPageLink(links []fhir.Link) string {
@@ -215,7 +211,7 @@ func NextDiagPageLink(links []fhir.Link) string {
 	return ""
 }
 
-func (df *DocumentFilter) ProcessDiagPage(url string) ([]fhir.Link, error) {	
+func (df *DocumentFilter) ProcessDiagPage(url string) ([]fhir.Link, error) {
 	fhirDiagResult, err := fhirC.NextFhirDiagRepts(url)
 	if err != nil {
 		log.Errorf("NextFHIRDiagnosticReports returned err: %s\n", err.Error())
@@ -230,6 +226,7 @@ func (df *DocumentFilter) ProcessDiagPage(url string) ([]fhir.Link, error) {
 	}
 	return fhirDiagResult.Link, nil
 }
+
 /////////////////////////////////////////////////////////////////////////////////////////
 //                                 FHIR Getters                                         /
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -348,7 +345,7 @@ func (df *DocumentFilter) SearchCaDocRef() error {
 // func (df *DocumentFilter) ProcessCaDiagPage(url string) ([]fhir.Link, error) {
 // 	//fmt.Printf("\n\n\n###ProcessCaDiagPage:1998\n\n")
 // 	//startTime := time.Now()
-	
+
 // 	fhirDiagResult, err := fhirC.NextFhirDiagRepts(url)
 // 	if err != nil {
 // 		log.Errorf("NextFHIRPatients returned err: %s\n", err.Error())
@@ -407,7 +404,7 @@ func (df *DocumentFilter) FollowNextDiagLinks(links []fhir.Link) {
 	df.Session.UpdateDiagStatus( "done")
 }
 */
-// func (df *DocumentFilter) ProcessDiagPage(url string) ([]fhir.Link, error) {	
+// func (df *DocumentFilter) ProcessDiagPage(url string) ([]fhir.Link, error) {
 // 	fhirDiagResult, err := fhirC.NextFhirDiagRepts(url)
 // 	if err != nil {
 // 		log.Errorf("NextFHIRPatients returned err: %s\n", err.Error())
@@ -423,11 +420,9 @@ func (df *DocumentFilter) FollowNextDiagLinks(links []fhir.Link) {
 // 	return fhirDiagResult.Link, nil
 // }
 
-
 // func (f *DocumentFilter) Search() ([]*fhir.DiagnosticReport, int64, error) {
 // 	return nil, 0, nil
 // }
-
 
 // func (df *DocumentFilter) FhirDiagRptsToCADocuments(fds []*fhir.DiagnosticReport) ([]*CADocument, error) {
 // 	caDocuments := []*CADocument{}
@@ -557,7 +552,7 @@ func (df *DocumentFilter) FollowNextDiagLinks(links []fhir.Link) {
 // 	return err
 // 	//return &buf, err
 // }
- */
+*/
 // func (df *DocumentFilter) SearchCaDocRef() error {
 // 	//url = "https://fhir-open.sandboxcerner.com/dstu2/0b8a0111-e8e6-4c26-a91c-5069cbc6b1ca/Binary/"https://fhir-open.sandboxcerner.com/dstu2/0b8a0111-e8e6-4c26-a91c-5069cbc6b1ca/"
 // 	// config := ActiveConfig()
@@ -622,7 +617,7 @@ func (df *DocumentFilter) FollowNextDiagLinks(links []fhir.Link) {
 // 	//return &buf, err
 // }
 
-/*  
+/*
 // func (f *DocumentFilter) ProcessCADocuments(docs []*DocumentSummary) error {
 // 	//caURL := ActiveConfig().Env("caServerURL")NO
 // 	var err error
@@ -813,7 +808,7 @@ func (df *DocumentFilter) CountCachedCaDocuments() (int64, error) {
 
 
 // 	//sortFields = append(sortFields, bson.E{"rept_datetime", sortOrder})
-	
+
 // 	sort := bson.E{}
 // 	if df.Column == "" {
 // 		df.Column = "rept_datetime"
@@ -903,7 +898,7 @@ func (df *DocumentFilter) CountCachedCaDocuments() (int64, error) {
 
 
 // 	//sortFields = append(sortFields, bson.E{"rept_datetime", sortOrder})
-	
+
 // 	sort := bson.E{}
 // 	if df.Column == "" {
 // 		df.Column = "rept_datetime"
@@ -1547,7 +1542,7 @@ func (df *DocumentFilter) FhirDocumentReferences() (*fhir.DocumentResults, error
 
 func (df *DocumentFilter) FhirDocumentReference() (*fhir.DocumentReference, error) {
 	c := config.Fhir()
-	log.Debugf("\nFhirDocumentReference is searching for ID: %s using fhirQuery: %s  queryFilter: %v\n", 
+	log.Debugf("\nFhirDocumentReference is searching for ID: %s using fhirQuery: %s  queryFilter: %v\n",
 			df.EnterpriseID, df.fhirQuery, df.CacheFilter)
 
 	dRef, err := c.GetDocumentReference(df.ID)
@@ -2281,7 +2276,6 @@ func (df *DocumentFilter) makeCacheFilter() error {
 // //                              Process Next Set of DiagRepts returned from  FHIR                     //
 // ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 // func (df *DocumentFilter) FollowDiagNextLinks(links []fhir.Link) {
 // 	// df.Session.UpdateDiagStatus("filling")
 // 	// df.Session.Status.Diagnostic = "filling"
@@ -2329,7 +2323,7 @@ func (df *DocumentFilter) makeCacheFilter() error {
 // // func (df *DocumentFilter) ProcessCaDiagPage(url string) ([]fhir.Link, error) {
 // // 	//fmt.Printf("\n\n\n###ProcessCaDiagPage:1998\n\n")
 // // 	//startTime := time.Now()
-	
+
 // // 	fhirDiagResult, err := fhirC.NextFhirDiagRepts(url)
 // // 	if err != nil {
 // // 		log.Errorf("NextFHIRPatients returned err: %s\n", err.Error())
@@ -2391,7 +2385,7 @@ func (df *DocumentFilter) makeCacheFilter() error {
 // func (df *DocumentFilter) ProcessDiagPage(url string) ([]fhir.Link, error) {
 // 	//fmt.Printf("\n\n\n###ProcessCaDiagPage:1998\n\n")
 // 	//startTime := time.Now()
-	
+
 // 	fhirDiagResult, err := fhirC.NextFhirDiagRepts(url)
 // 	if err != nil {
 // 		log.Errorf("NextFHIRPatients returned err: %s\n", err.Error())
@@ -2430,7 +2424,7 @@ func (df *DocumentFilter) makeCacheFilter() error {
 // 	//entry := results.Entry
 // 	docs := []*fhir.Document{}
 // 	for _, entry := range results.Entry {
-	
+
 // 		doc := entry.Document
 // 		doc.FullURL = entry.FullURL
 // 		docs = append(docs, &doc)
@@ -2460,7 +2454,6 @@ func (df *DocumentFilter) makeCacheFilter() error {
 // }
 
 // func InsertFhirDoc(doc *fhir.Document, sessionId string) error {
-	
 
 // 	doc.SessionID = sessionId
 // 	// _, err := FindByPhone(c.FaxNumber, c.Facility)
@@ -2775,7 +2768,7 @@ func DeleteDocuments(docSessionId string) {
 		log.Errorf("DeleteDocuments:2230 -- for session %s failed: %v", docSessionId, err)
 		return
 	}
-	log.Infof("DeleteDocuments:2233 -- Deleted %v Documents for session: %v in %s", 
+	log.Infof("DeleteDocuments:2233 -- Deleted %v Documents for session: %v in %s",
 				deleteResult.DeletedCount, docSessionId, time.Since(startTime))
 }
 */

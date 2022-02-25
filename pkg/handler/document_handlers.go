@@ -17,11 +17,11 @@ import (
 	//"github.com/davecgh/go-spew/spew"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
-	fhir "gitlab.com/dhf0820/fhirongo"
+	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
 
-	//"gitlab.com/dhf0820/cerner_ca/pkg/model"
-	"gitlab.com/dhf0820/cerner_ca/pkg/ca"
-	m "gitlab.com/dhf0820/cerner_ca/pkg/model"
+	//"github.com/vsoftcorp/cernerFhir/pkg/model"
+	"github.com/vsoftcorp/cernerFhir/pkg/ca"
+	m "github.com/vsoftcorp/cernerFhir/pkg/model"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

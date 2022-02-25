@@ -5,13 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
 	//"time"
 
 	log "github.com/sirupsen/logrus"
-	storage "gitlab.com/dhf0820/cerner_ca/pkg/storage"
+	storage "github.com/vsoftcorp/cernerFhir/pkg/storage"
 
 	//"time"
-	fhir "gitlab.com/dhf0820/fhirongo"
+	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"

@@ -9,7 +9,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	m "gitlab.com/dhf0820/cerner_ca/pkg/model"
+	m "github.com/vsoftcorp/cernerFhir/pkg/model"
 )
 
 //####################################### Structures #######################################
@@ -106,11 +106,11 @@ func extractErrorDetails(result string) (int, string) {
 // }
 
 func SetTokenCookie(w http.ResponseWriter, token string) *http.Cookie {
-	timeout := 60*m.LoginExpiresAfter()  
-	tokenCookie := &http.Cookie {
-		Name:"token",
-		Value: token,
-		MaxAge: int(timeout),
+	timeout := 60 * m.LoginExpiresAfter()
+	tokenCookie := &http.Cookie{
+		Name:     "token",
+		Value:    token,
+		MaxAge:   int(timeout),
 		HttpOnly: true,
 	}
 	http.SetCookie(w, tokenCookie)

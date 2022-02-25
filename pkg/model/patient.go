@@ -8,6 +8,7 @@ package model
 import (
 	"context"
 	"net/http"
+
 	//"errors"
 	"errors"
 	"fmt"
@@ -21,11 +22,11 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/dgrijalva/jwt-go"
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/dhf0820/cerner_ca/pkg/common"
-	com "gitlab.com/dhf0820/cerner_ca/pkg/common"
-	"gitlab.com/dhf0820/cerner_ca/pkg/storage"
-	"gitlab.com/dhf0820/fhirongo"
-	fhir "gitlab.com/dhf0820/fhirongo"
+	"github.com/vsoftcorp/cernerFhir/fhirongo"
+	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
+	"github.com/vsoftcorp/cernerFhir/pkg/common"
+	com "github.com/vsoftcorp/cernerFhir/pkg/common"
+	"github.com/vsoftcorp/cernerFhir/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -109,26 +110,25 @@ type Identifier struct {
 }
 
 type PatientFilter struct {
-	Skip         int64    `schema:"skip"`
-	Page         int64    `schema:"page"`
-	PageStr      string   `schema:"page_str"`
-	Limit        int64    `schema:"limit"`
-	SortBy       []string `schema:"column"`
-	Order        string   `schema:"order"`
-	Mode         string   `schema:"mode"`
-	ResultFormat string
-	Count        string
-	UseCache     string `schema:"useCashe"`
-	FillCache    string `schema:"fillCache"`
-	Cache        string `schema:"cache"` // reset, stats
-	Session      *AuthSession
-	SessionId    string `schema:"session_id"`
-	UserId 		 string
-	JWTokenStr	 string
-	JWToken 	 *jwt.Token
-	TokenCookie	 *http.Cookie
+	Skip          int64    `schema:"skip"`
+	Page          int64    `schema:"page"`
+	PageStr       string   `schema:"page_str"`
+	Limit         int64    `schema:"limit"`
+	SortBy        []string `schema:"column"`
+	Order         string   `schema:"order"`
+	Mode          string   `schema:"mode"`
+	ResultFormat  string
+	Count         string
+	UseCache      string `schema:"useCashe"`
+	FillCache     string `schema:"fillCache"`
+	Cache         string `schema:"cache"` // reset, stats
+	Session       *AuthSession
+	SessionId     string `schema:"session_id"`
+	UserId        string
+	JWTokenStr    string
+	JWToken       *jwt.Token
+	TokenCookie   *http.Cookie
 	AccessDetails *AccessDetails
-
 
 	//ID           string `schema:"id"`  //EnterpriseID shoud be used only
 	MRN string `schema:"mrn"`
@@ -708,12 +708,12 @@ func (f *PatientFilter) FollowNextLinks(links []fhirongo.Link) {
 	url := NextPageLink(links)
 	i := 1
 	f.Session.Status.Patient = "filling"
-	f.Session.UpdatePatStatus( "filling")
+	f.Session.UpdatePatStatus("filling")
 	//time.Sleep(10 * time.Second)
 	for {
 		startTime := time.Now()
 		if url == "" {
-			f.Session.UpdatePatStatus( "done")
+			f.Session.UpdatePatStatus("done")
 			f.Session.Status.Patient = "done"
 			log.Info("CachePages for url is blank, done")
 			break

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	//"github.com/davecgh/go-spew/spew"
-	fhir "gitlab.com/dhf0820/fhirongo"
+	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
 
 	// "log"
 	//"github.com/davecgh/go-spew/spew"
@@ -16,15 +16,15 @@ import (
 
 //PatientQuery is a structur to contain all the query items possible to find a patient
 type PatientQuery struct {
-	ID          string    `schema:"id"`
-	MRN         string    `schema:"mrn"`
-	SSN         string    `schema:"ssn"`
-	Given       string    `schema:"given"`
-	Family      string    `schema:"family"`
-	BirthDate   time.Time `schema:"birthdate"` // SHould this be a string?
-	Email       string    `schema:"email"`
-	PatientGPI  string    `schema:"patient_gpi"`
-	Encounter   string    `schema:"encounter"`
+	ID         string    `schema:"id"`
+	MRN        string    `schema:"mrn"`
+	SSN        string    `schema:"ssn"`
+	Given      string    `schema:"given"`
+	Family     string    `schema:"family"`
+	BirthDate  time.Time `schema:"birthdate"` // SHould this be a string?
+	Email      string    `schema:"email"`
+	PatientGPI string    `schema:"patient_gpi"`
+	Encounter  string    `schema:"encounter"`
 	//queryString string
 }
 
@@ -44,7 +44,7 @@ func (pf *PatientFilter) CaPatientSearch() ([]*CAPatient, int, int64, int64, err
 	// Page == 0 indicates to fill the cache with patients from FHIR Source
 	// Page > 0 indicates to use the cache as source of patients
 	// if pf.Page > 0 &&  pf.Cache == ""{ //&& pf.Page <= pages {
-		
+
 	// 	fmt.Printf("\n\n\n   ### Reseting Cache. Requesting Cached Page %d\n", pf.Page)
 	// 	pats, inPage, pages, inCache, err := pf.GetPatientPage()
 	// 	return pats, inPage, pages, inCache, err
@@ -52,7 +52,6 @@ func (pf *PatientFilter) CaPatientSearch() ([]*CAPatient, int, int64, int64, err
 
 	// if Page == 0 fill the cache querying FHIR using the values in PatientFilter.
 
-	
 	pfs, err := pf.Session.UpdatePatSessionId()
 	if err != nil {
 		log.Errorf("CaPatientSearch:61 - %s", err.Error())
@@ -63,7 +62,7 @@ func (pf *PatientFilter) CaPatientSearch() ([]*CAPatient, int, int64, int64, err
 	// sessId := CreateSessionId()
 	// pf.JWToken = SetTokenSession(pf.JWToken, sessId)
 
-	_, err = pf.FhirCaPatients()  // Caches what it finds.
+	_, err = pf.FhirCaPatients() // Caches what it finds.
 
 	//fmt.Printf("Search Patients: %s\n", spew.Sdump(pats))
 	//pf.CountCachedCaPatients()

@@ -10,10 +10,10 @@ import (
 	//"github.com/swaggo/http-swagger" // http-swagger middleware
 
 	// http-swagger middleware
-	h "gitlab.com/dhf0820/cerner_ca/pkg/handler"
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
-	m "gitlab.com/dhf0820/cerner_ca/pkg/model"
+	h "github.com/vsoftcorp/cernerFhir/pkg/handler"
+	m "github.com/vsoftcorp/cernerFhir/pkg/model"
 	//m "pkg/model"
 )
 

@@ -4,6 +4,7 @@ import (
 	//"bytes"
 	"encoding/json"
 	"net/http"
+
 	//"time"
 	l "log"
 	//"os"
@@ -14,20 +15,19 @@ import (
 	//"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
 	//"github.com/dgrijalva/jwt-go"
-	m "gitlab.com/dhf0820/cerner_ca/pkg/model"
+	m "github.com/vsoftcorp/cernerFhir/pkg/model"
 )
 
 type LoginFilter struct {
-	UserName	string 	`schema:"user_name"`
-	Password	string	`schema:"password"`
+	UserName string `schema:"user_name"`
+	Password string `schema:"password"`
 }
 
 type LoginResponse struct {
-	Status 		int 		`json:"status"`
-	Message 	string		`json:"message"`
-	SessionId 	string  	`json:"session_id"`
+	Status    int    `json:"status"`
+	Message   string `json:"message"`
+	SessionId string `json:"session_id"`
 }
-
 
 func WriteLoginResponse(w http.ResponseWriter, resp *LoginResponse) error {
 	log.Debug("WriteLoginResponse:26")
@@ -42,16 +42,15 @@ func WriteLoginResponse(w http.ResponseWriter, resp *LoginResponse) error {
 	return nil
 }
 
-
 func Login(w http.ResponseWriter, r *http.Request) {
 	//var lbuf bytes.Buffer
 	//var logIt = l.New(os.Stderr, "app: ", l.Ldate | l.Ltime| l.Lshortfile)
-	l.SetFlags(l.Ldate | l.Ltime| l.Lshortfile)
+	l.SetFlags(l.Ldate | l.Ltime | l.Lshortfile)
 
 	//l.SetFlags(l.Ldate | l.Ltime| l.Lshortfile )
 	var decoder = schema.NewDecoder()
 	decoder.IgnoreUnknownKeys(true)
-	var params  LoginFilter
+	var params LoginFilter
 	err := decoder.Decode(&params, r.URL.Query())
 	if err != nil {
 		log.Println("Error in GET parameters : ", err)
@@ -71,7 +70,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	} else {
 		resp.Status = 200
 		resp.Message = "Ok"
-		resp.SessionId = sessionId 
+		resp.SessionId = sessionId
 		log.Debugf("AccessHandler.Login:73 -- %s", sessionId)
 
 	}

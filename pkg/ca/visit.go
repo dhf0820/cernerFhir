@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 	"strings"
+	"time"
+
 	//"github.com/davecgh/go-spew/spew"
-	m "gitlab.com/dhf0820/cerner_ca/pkg/model"
-	fhir "gitlab.com/dhf0820/fhirongo"
+	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
+	m "github.com/vsoftcorp/cernerFhir/pkg/model"
 )
 
 type Visit struct {
@@ -27,23 +28,23 @@ type Visit struct {
 	AdmitSource     string     `json:"admit_source"`
 	Comment         string     `json:"comment"`
 	Origin          string     `json:"origin"`
-	EnterpriseId 	string		`json:"enterprise_id"`
-	PatientGPI		string		`json:"patient_gpi"`
-	AccountNumber	string		`json:"account_number"`
-	Text 			string 		`json:"text"`
+	EnterpriseId    string     `json:"enterprise_id"`
+	PatientGPI      string     `json:"patient_gpi"`
+	AccountNumber   string     `json:"account_number"`
+	Text            string     `json:"text"`
 }
 
 type CaEncounterResponse struct {
-	StatusCode   int    			`json:"status_code"`
-	Message      string 			`json:"message"`
-	CacheStatus	 string 			`json:"cache_status"`
-	TotalInCache int64   	 		`json:"total_visits"`
-	PagesInCache int64    			`json:"pages_in_cache"`
-	NumberInPage int64    			`json:"visits_in_page"`
-	Page         int64    			`json:"page"`
-	SessionId 	 string         	`json:"session_id"`
-	Visits 	 	 []*Visit 			`json:"visits"`
-	Visit   	 *Visit    			`json:"visit"`
+	StatusCode   int      `json:"status_code"`
+	Message      string   `json:"message"`
+	CacheStatus  string   `json:"cache_status"`
+	TotalInCache int64    `json:"total_visits"`
+	PagesInCache int64    `json:"pages_in_cache"`
+	NumberInPage int64    `json:"visits_in_page"`
+	Page         int64    `json:"page"`
+	SessionId    string   `json:"session_id"`
+	Visits       []*Visit `json:"visits"`
+	Visit        *Visit   `json:"visit"`
 }
 
 func WriteCaEncounterResponse(w http.ResponseWriter, resp *CaEncounterResponse) error {
@@ -57,7 +58,7 @@ func WriteCaEncounterResponse(w http.ResponseWriter, resp *CaEncounterResponse) 
 	return nil
 }
 
-func FhirEncountersToCA(w http.ResponseWriter, total, pages, inPage, page  int64, cacheStatus string, encs []*fhir.Encounter) {
+func FhirEncountersToCA(w http.ResponseWriter, total, pages, inPage, page int64, cacheStatus string, encs []*fhir.Encounter) {
 	//fmt.Printf("Convert from: %s\n\n", spew.Sdump(encs))
 	caVisits := []*Visit{}
 	//fmt.Printf("\n###visits:62 - number in array := %d\n", len(encs))
@@ -66,7 +67,7 @@ func FhirEncountersToCA(w http.ResponseWriter, total, pages, inPage, page  int64
 		caVisits = append(caVisits, &visit)
 	}
 	//fmt.Printf("CaVisits:67 -  %s\n", spew.Sdump(caVisits))
-	
+
 	resp := CaEncounterResponse{}
 	resp.Message = "Ok"
 	resp.StatusCode = 200
@@ -92,24 +93,21 @@ func FhirEncToCA(enc fhir.Encounter) Visit {
 	// 	patref := strings.Split(enc.Subject.Reference, "/")
 	// 	v.PatientGPI = patref[1]
 	// } else{
-		patref := strings.Split(enc.Patient.Reference, "/")
-		v.PatientGPI = patref[1]
+	patref := strings.Split(enc.Patient.Reference, "/")
+	v.PatientGPI = patref[1]
 	// }
 	if enc.Period != nil {
 		v.AdmitDate = &enc.Period.Start
 		v.DischargeDate = &enc.Period.End
 	}
-	
+
 	if len(enc.Location) > 0 {
 		v.Clinic = enc.Location[0].Location.Display
 	}
-	v.PatientType = enc.Class      //.Display
+	v.PatientType = enc.Class //.Display
 
 	return v
 }
-
-
-
 
 func GetFhirReference(ref fhir.Reference) string {
 	return ref.Display

@@ -14,8 +14,8 @@ import (
 	"strings"
 	"testing"
 
-	//ca "gitlab.com/dhf0820/cerner_ca/pkg/ca"
-	//m "gitlab.com/dhf0820/cerner_ca/pkg/model"
+	//ca "github.com/vsoftcorp/cernerFhir/pkg/ca"
+	//m "github.com/vsoftcorp/cernerFhir/pkg/model"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -39,10 +39,9 @@ func TestGetImage(t *testing.T) {
 				Decode("197466431.pdf", string(content))
 				//json.NewDecoder(resp.Body)
 
-	
 				NewRouter().ServeHTTP(resp, req)
-			//content, err := ioutil.ReadFile("../../sample.pdf")     // the file is inside the local directory
-			//content, err := ioutil.ReadFile("./test1.txt")     // the file is inside the local directory
+				//content, err := ioutil.ReadFile("../../sample.pdf")     // the file is inside the local directory
+				//content, err := ioutil.ReadFile("./test1.txt")     // the file is inside the local directory
 
 				fmt.Printf("Length of data: %d\n", len(content))
 				// if err != nil {
@@ -57,12 +56,12 @@ func TestGetImage(t *testing.T) {
 				// defer res.Body.Close()
 				// data, err := ioutil.ReadAll(res.Body)
 				// So(err, ShouldBeNil)
-				  //pdf:= base64.StdEncoding.EncodeToString(content)
+				//pdf:= base64.StdEncoding.EncodeToString(content)
 				//pdf, err := base64.StdEncoding.DecodeString(string(content))
 				// So(err, ShouldBeNil)
-				   //fmt.Printf("saving %d bytes\n", len(pdf))
+				//fmt.Printf("saving %d bytes\n", len(pdf))
 				//WriteBytesToFile(pdf)
-				   //WriteStringToFile("./test3.pdf", string(pdf))
+				//WriteStringToFile("./test3.pdf", string(pdf))
 				// if err := os.WriteFile("file.pdf", string(data), 0666); err != nil {
 				// 	log.Fatal(err)
 				// }
@@ -72,13 +71,12 @@ func TestGetImage(t *testing.T) {
 				// }
 				// // remember to close the file
 				// defer f.Close()
-			
+
 				// // write bytes to the file
 				// _, err = f.Write(data)
 				// if err != nil {
 				// 	log.Fatal(err)
 				// }
-
 
 				// NewRouter().ServeHTTP(resp, req)
 				// defer resp.Body.Close()
@@ -113,28 +111,27 @@ func WriteStringToFile(filepath, s string) error {
 	return nil
 }
 
-func WriteBytesToFile(byteSlice []byte){
+func WriteBytesToFile(byteSlice []byte) {
 	file, err := os.OpenFile(
 		"test.txt",
 		os.O_WRONLY|os.O_TRUNC|os.O_CREATE,
 		0666,
-	 )
-	 if err != nil {
+	)
+	if err != nil {
 		log.Fatal(err)
-	 }
-	 defer file.Close()
-   
-	 // Write bytes to file
+	}
+	defer file.Close()
+
+	// Write bytes to file
 	// byteSlice := []byte("Bytes!\n")
-	 bytesWritten, err := file.Write(byteSlice)
-	 if err != nil {
+	bytesWritten, err := file.Write(byteSlice)
+	if err != nil {
 		log.Fatal(err)
-	 }
-	 log.Printf("Wrote %d bytes.\n", bytesWritten)
+	}
+	log.Printf("Wrote %d bytes.\n", bytesWritten)
 }
 
-
-func Decode(fileName string, b64 string ) {
+func Decode(fileName string, b64 string) {
 	//b64, _ := ioutil.ReadFile("../../sample.pdf")
 	//b64, _ := ioutil.ReadFile("../model/sample.bas64")
 	dec, err := base64.StdEncoding.DecodeString(b64)

@@ -6,11 +6,12 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
+
 	//"io/ioutil"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
-	m "gitlab.com/dhf0820/cerner_ca/pkg/model"
+	m "github.com/vsoftcorp/cernerFhir/pkg/model"
 )
 
 type ImageResponse []byte
@@ -34,12 +35,12 @@ func WriteImageResponse(w http.ResponseWriter, status_code int, data []byte) err
 func GetImage(w http.ResponseWriter, r *http.Request) {
 	// content, err := ioutil.ReadFile("./sample.pdf")     // the file is inside the local directory
 	// fmt.Printf("Length of data: %d\n", len(content))
-    // if err != nil {
-    //     fmt.Println("Err")
+	// if err != nil {
+	//     fmt.Println("Err")
 	// 	WriteImageResponse(w, 400, nil)
 	// 	return
 
-    // }
+	// }
 	//WriteImageResponse(w, 200, content)
 	fmt.Printf("\nAccept Header: %s\n\n", r.Header.Get("Accept"))
 	params := mux.Vars(r)
@@ -64,7 +65,6 @@ func GetImage(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("\n\n###ContentType: %s\n", ImageResponse.ContentType)
 	fmt.Printf("\n\n###Length of Content: %d\n", len(ImageResponse.Content))
 	WriteImageResponse(w, StatusCode, dec)
-
 
 	// doc := m.DocumentSummary{EnterpriseID: id}
 	// err := doc.GetDocumentImage()

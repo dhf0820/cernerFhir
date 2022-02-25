@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	log "github.com/sirupsen/logrus"
-	m "gitlab.com/dhf0820/cerner_ca/pkg/model"
+	m "github.com/vsoftcorp/cernerFhir/pkg/model"
 )
 
 // type ImageResponse []byte

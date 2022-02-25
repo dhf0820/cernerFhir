@@ -9,7 +9,7 @@ import (
 	//"github.com/davecgh/go-spew/spew"
 	log "github.com/sirupsen/logrus"
 
-	"go.mongodb.org/mongo-driver/bson"
+	//"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -62,23 +62,23 @@ func Open(url string) (*MongoDB, error) {
 	return &db, err
 }
 
-func listCollections(db *mongo.Database){
+// func listCollections(db *mongo.Database){
 	    
-    // use a filter to only select capped collections
-	fmt.Printf("Collections in: %s\n", db.Name())
-    result, err := db.ListCollectionNames(
-        context.TODO(), bson.D{})
-       // bson.D{{"options.capped", false}})
+//     // use a filter to only select capped collections
+// 	fmt.Printf("Collections in: %s\n", db.Name())
+//     result, err := db.ListCollectionNames(
+//         context.TODO(), bson.D{})
+//        // bson.D{{"options.capped", false}})
 
-    if err != nil {
-        log.Fatal(err)
-    }
-	fmt.Println("List of Collections")
+//     if err != nil {
+//         log.Fatal(err)
+//     }
+// 	fmt.Println("List of Collections")
 	
-    for _, coll := range result {
-        fmt.Println(coll)
-    }
-}
+//     for _, coll := range result {
+//         fmt.Println(coll)
+//     }
+// }
 
 func Current() (*MongoDB, error) {
 	if db.Client != nil {

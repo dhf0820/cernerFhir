@@ -4,16 +4,16 @@ import (
 	//http "net/http"
 	"encoding/json"
 	"fmt"
-	 "io/ioutil"
+	"io/ioutil"
 	"net/http/httptest"
 	"testing"
 
-	//h "gitlab.com/dhf0820/cerner_ca/pkg/handler"
+	//h "github.com/vsoftcorp/cernerFhir/pkg/handler"
 
 	//"github.com/davecgh/go-spew/spew"
 	//"github.com/davecgh/go-spew/spew"
 	. "github.com/smartystreets/goconvey/convey"
-	ca "gitlab.com/dhf0820/cerner_ca/pkg/ca"
+	ca "github.com/vsoftcorp/cernerFhir/pkg/ca"
 )
 
 func TestFHIRSearch(t *testing.T) {
@@ -36,12 +36,11 @@ func TestFHIRSearch(t *testing.T) {
 				So(len(results.Visits), ShouldBeGreaterThan, 10)
 
 				// %s\n", spew.Sdump(results))
-				
+
 			})
 		})
 	})
 }
-
 
 func CAEncounterResults(resp *httptest.ResponseRecorder) (*ca.CaEncounterResponse, error) {
 	b, _ := ioutil.ReadAll(resp.Body)

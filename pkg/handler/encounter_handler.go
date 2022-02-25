@@ -11,23 +11,23 @@ import (
 	log "github.com/sirupsen/logrus"
 	//"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
-	ca "gitlab.com/dhf0820/cerner_ca/pkg/ca"
-	m "gitlab.com/dhf0820/cerner_ca/pkg/model"
+	ca "github.com/vsoftcorp/cernerFhir/pkg/ca"
+	m "github.com/vsoftcorp/cernerFhir/pkg/model"
 
-	fhir "gitlab.com/dhf0820/fhirongo"
+	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
 )
 
 type EncounterResponse struct {
-	StatusCode   int    			`json:"status_code"`
-	Message      string 			`json:"message"`
-	CacheStatus  string 			`json:"cache_status"`
-	TotalInCache int64   	 		`json:"total_encounters"`
-	PagesInCache int64    			`json:"pages_in_cache"`
-	NumberInPage int64    			`json:"encounters_in_page"`
-	Page         int64    			`json:"page"`
-	SessionId 	 string         	`json:"session_id"`
-	Encounters 	 []*fhir.Encounter 	`json:"encounters"`
-	Encounter 	 fhir.Encounter    	`json:"encounter"`
+	StatusCode   int               `json:"status_code"`
+	Message      string            `json:"message"`
+	CacheStatus  string            `json:"cache_status"`
+	TotalInCache int64             `json:"total_encounters"`
+	PagesInCache int64             `json:"pages_in_cache"`
+	NumberInPage int64             `json:"encounters_in_page"`
+	Page         int64             `json:"page"`
+	SessionId    string            `json:"session_id"`
+	Encounters   []*fhir.Encounter `json:"encounters"`
+	Encounter    fhir.Encounter    `json:"encounter"`
 }
 
 type EncounterWithPatientResponse struct {
@@ -113,7 +113,7 @@ func FindEncounters(w http.ResponseWriter, r *http.Request) {
 	}
 	resp.CacheStatus = cacheStatus
 	resp.Encounters = encs
-	resp.NumberInPage = numInPage 
+	resp.NumberInPage = numInPage
 	resp.PagesInCache = pagesInCache
 	resp.TotalInCache = totalInCache
 	if err != nil {
@@ -122,13 +122,13 @@ func FindEncounters(w http.ResponseWriter, r *http.Request) {
 	}
 	WriteEncounterResponse(w, &resp)
 }
-	
-func FillEncounterCache(ef *m.EncounterFilter, w http.ResponseWriter ) {
+
+func FillEncounterCache(ef *m.EncounterFilter, w http.ResponseWriter) {
 	log.Debug("#####     FillEncounterCache")
 	startTime := time.Now()
 	//ef.Session.UpdateEncSessionId()  // reset force the EncSessionId to be new so the old will delete
 	resp := EncounterResponse{}
-	_, err := ef.SearchEncounters()  // fill the cache
+	_, err := ef.SearchEncounters() // fill the cache
 	if err != nil {
 		err = WriteGenericResponse(w, 404, err.Error())
 		if err != nil {
@@ -159,43 +159,41 @@ func FillEncounterCache(ef *m.EncounterFilter, w http.ResponseWriter ) {
 	WriteEncounterResponse(w, &resp)
 	log.Infof("FillEncounterCache:244 -- ElapsedTime: %f seconds", time.Since(startTime).Seconds())
 }
-	//statusCode = 200
 
-	// encounters, err := m.FindFhirEncounters(query)
-	// if err != nil {
-	// 	var statusCode int
-	// 	s := strings.Split(err.Error(), "|")
+//statusCode = 200
 
-	// 	// if statusCode, err = strconv.ParseInt(s[0], 10, 64); err == nil {
-	// 	if statusCode, err = strconv.Atoi(s[0]); err == nil {
-	// 		statusCode = 500
-	// 	}
+// encounters, err := m.FindFhirEncounters(query)
+// if err != nil {
+// 	var statusCode int
+// 	s := strings.Split(err.Error(), "|")
 
-	// 	err = fmt.Errorf("%v", s[1])
-	// 	// fmt.Printf("  StatusCode: %d\n", statusCode)
-	// 	// fmt.Printf("error: %s\n", err)
-	// 	//statusMessage := fmt.Sprintf("FindEncounter Error: %s", err)
-	// 	err = WriteGenericResponse(w, statusCode, err.Error())
-	// 	if err != nil {
-	// 		log.Println("Error writing response", err)
-	// 	}
-	// 	return
-	// }
-	// if len(encounters) == 0 {
-	// 	err := fmt.Errorf("No Encounters found for %s", ef.)
-	// 	err = WriteGenericResponse(w, 400, err.Error())
-	// 	if err != nil {
-	// 		log.Println("Error writing response", err)
-	// 	}
-	// 	return
-	// }
+// 	// if statusCode, err = strconv.ParseInt(s[0], 10, 64); err == nil {
+// 	if statusCode, err = strconv.Atoi(s[0]); err == nil {
+// 		statusCode = 500
+// 	}
 
-	//encounters = *encs
-	// fmt.Println("Encounters found:")
-	// spew.Dump(Encounters)
+// 	err = fmt.Errorf("%v", s[1])
+// 	// fmt.Printf("  StatusCode: %d\n", statusCode)
+// 	// fmt.Printf("error: %s\n", err)
+// 	//statusMessage := fmt.Sprintf("FindEncounter Error: %s", err)
+// 	err = WriteGenericResponse(w, statusCode, err.Error())
+// 	if err != nil {
+// 		log.Println("Error writing response", err)
+// 	}
+// 	return
+// }
+// if len(encounters) == 0 {
+// 	err := fmt.Errorf("No Encounters found for %s", ef.)
+// 	err = WriteGenericResponse(w, 400, err.Error())
+// 	if err != nil {
+// 		log.Println("Error writing response", err)
+// 	}
+// 	return
+// }
 
-
-
+//encounters = *encs
+// fmt.Println("Encounters found:")
+// spew.Dump(Encounters)
 
 // getEncounter finds the Encounter by their patentID
 // findEncounter finds Encounters by information in their record (mrn, ssn.,,,)

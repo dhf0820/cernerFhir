@@ -6,16 +6,16 @@ import (
 	log "github.com/sirupsen/logrus"
 	//"github.com/davecgh/go-spew/spew"
 	"github.com/joho/godotenv"
-	m "gitlab.com/dhf0820/cerner_ca/pkg/model"
+	m "github.com/vsoftcorp/cernerFhir/pkg/model"
 
 	"os"
 )
 
 //TODO: Not sure we watn to initialize everything for Testing. No reason to start listening
-func setupTest(token string) *m.AuthSession{
+func setupTest(token string) *m.AuthSession {
 	godotenv.Load("env_test")
 	m.InitializeAll(os.Getenv("MONGODB"))
-	asId, err :=m.Login("test", "password")
+	asId, err := m.Login("test", "password")
 	if err != nil {
 		log.Panicf("Could not log in")
 	}
@@ -66,7 +66,6 @@ func setupTest(token string) *m.AuthSession{
 // 		log.Panic("TestGetMetaData error")
 // 	}
 // 	//ad.TokenStr = tokenStr
-	
+
 // 	return ad
 // }
-

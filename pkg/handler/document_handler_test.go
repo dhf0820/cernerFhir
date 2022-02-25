@@ -4,16 +4,18 @@ import (
 	//http "net/http"
 	"encoding/json"
 	"fmt"
-	fhir "gitlab.com/dhf0820/fhirongo"
 	"io/ioutil"
 	"net/http/httptest"
 	"testing"
-	//h "gitlab.com/dhf0820/cerner_ca/pkg/handler"
+
+	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
+
+	//h "github.com/vsoftcorp/cernerFhir/pkg/handler"
 
 	//"github.com/davecgh/go-spew/spew"
 	. "github.com/smartystreets/goconvey/convey"
-	"gitlab.com/dhf0820/cerner_ca/pkg/ca"
-	m "gitlab.com/dhf0820/cerner_ca/pkg/model"
+	"github.com/vsoftcorp/cernerFhir/pkg/ca"
+	m "github.com/vsoftcorp/cernerFhir/pkg/model"
 )
 
 func TestSearchDocuments(t *testing.T) {

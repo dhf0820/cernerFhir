@@ -9,15 +9,14 @@ import (
 	"testing"
 	"time"
 
-	//fhir "gitlab.com/dhf0820/fhirongo"
-	//m "gitlab.com/dhf0820/cerner_ca/pkg/model"
-	//h "gitlab.com/dhf0820/cerner_ca/pkg/handler"
-	//m "gitlab.com/dhf0820/cerner_ca/pkg/model"
+	//fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
+	//m "github.com/vsoftcorp/cernerFhir/pkg/model"
+	//h "github.com/vsoftcorp/cernerFhir/pkg/handler"
+	//m "github.com/vsoftcorp/cernerFhir/pkg/model"
 	//"github.com/davecgh/go-spew/spew"
 	"github.com/davecgh/go-spew/spew"
 	. "github.com/smartystreets/goconvey/convey"
 )
-
 
 // func TestGetPatient(t *testing.T) {
 // 	as := setupTest("")
@@ -30,13 +29,11 @@ import (
 // 			NewRouter().ServeHTTP(resp, req)
 // 			So(resp.Code, ShouldEqual, 200)
 
-
 // 			//err: json.Unmarshal()
 // 		})
 // 	})
-			
-// }
 
+// }
 
 func TestCaSearchPatient(t *testing.T) {
 	//session := setupTest("handler-test")
@@ -56,8 +53,8 @@ func TestCaSearchPatient(t *testing.T) {
 			qry := "/api/rest/v1/patient?family=smart&page=1&cache=reset"
 			//query = qry
 			req := httptest.NewRequest("GET", qry, nil)
-			
-			req.Header.Set("AUTHORIZATION",  sessionId)
+
+			req.Header.Set("AUTHORIZATION", sessionId)
 			fmt.Printf("\n\n### Execute GET for token: %s - qry: %s\n", sessionId, qry)
 			resp := httptest.NewRecorder()
 			Convey("When the request is handled by the router", func() {
@@ -68,7 +65,7 @@ func TestCaSearchPatient(t *testing.T) {
 				//b, _ := ioutil.ReadAll(resp.Body)
 
 				//pats, _ := PatientResults(resp)
-			
+
 				caResp, err := CaPatientResults(resp)
 				So(err, ShouldBeNil)
 				Convey("Then the response should be a 200", func() {
@@ -82,16 +79,16 @@ func TestCaSearchPatient(t *testing.T) {
 					// Page         int           	 `json:"page"`
 					sessionId = caResp.SessionId
 					fmt.Printf("Total: %d, Pages: %d, NumInPage: %d, Page: %d\n",
-								caResp.Total, caResp.PagesInCache, caResp.NumberInPage, caResp.Page)
+						caResp.Total, caResp.PagesInCache, caResp.NumberInPage, caResp.Page)
 					fmt.Printf("SessionId: %s,  \n", sessionId)
 				})
-				Convey("Should be able to request page 2", func(){
+				Convey("Should be able to request page 2", func() {
 					time.Sleep(5 * time.Second) // wait for a couple of pages
 					pg2qry := "/api/rest/v1/patient?family=smart&page=3"
 					req2 := httptest.NewRequest("GET", pg2qry, nil)
 					req2.Header.Set("AUTHORIZATION", sessionId)
 					resp2 := httptest.NewRecorder()
-					startTime2:= time.Now()
+					startTime2 := time.Now()
 					NewRouter().ServeHTTP(resp, req)
 					fmt.Printf("ResponseTime: %f seconds\n", time.Since(startTime2).Seconds())
 					caResp2, err := CaPatientResults(resp2)
@@ -99,17 +96,17 @@ func TestCaSearchPatient(t *testing.T) {
 					So(caResp2, ShouldNotBeNil)
 					sessionId = caResp.SessionId
 					fmt.Printf("Total: %d, Pages: %d, NumInPage: %d, Page: %d\n",
-								caResp.Total, caResp.PagesInCache, caResp.NumberInPage, caResp.Page)
-					fmt.Printf(" sessionID Returned: %s\n",  sessionId)
+						caResp.Total, caResp.PagesInCache, caResp.NumberInPage, caResp.Page)
+					fmt.Printf(" sessionID Returned: %s\n", sessionId)
 
 				})
 			})
 		})
 		fmt.Printf("--Waiting for all pages to finish\n")
 		time.Sleep(20 * time.Second)
-		
+
 		// Convey("RetrievingCacheInfo", func() {
-			
+
 		// })
 
 		// SkipConvey("Given a query string of family=sma&given=baby use cache to find", func() {
@@ -136,7 +133,7 @@ func TestCaSearchPatient(t *testing.T) {
 		// 			So(pats[0].Name, ShouldEqual, "SMART, BABY BOY")
 		// 			So(pats[0].MRN, ShouldEqual, "6946")
 		// 			//fmt.Printf("Found: %s\n", spew.Sdump(pats[0]))
-					
+
 		// 		})
 		// 	})
 		// })
