@@ -15,7 +15,7 @@ func TestDeleteAuthSession(t *testing.T) {
 	as := setupTest("")
 	Convey("Delete AuthSession", t, func() {
 		So(as.ID, ShouldNotEqual, primitive.NilObjectID)
-		session := as
+		//session := as
 		session, err := ValidateAuth("test")
 		// fmt.Printf("validated session: %s\n", session.SessionID)
 		// fmt.Printf("ooriginal session: %s\n", as.SessionID)
@@ -24,7 +24,7 @@ func TestDeleteAuthSession(t *testing.T) {
 		err = session.Delete()
 		So(err, ShouldBeNil)
 		fmt.Printf("Validating a deleted session\n")
-		session, err = ValidateAuth("test")
+		_, err = ValidateAuth("test")
 		So(err, ShouldNotBeNil)
 		So(err, ShouldEqual,"Not Authorized")
 	})
@@ -40,6 +40,7 @@ func TestGetAuthSession(t *testing.T) {
 		So(session, ShouldNotBeNil)
 		So(as.PatSessionId, ShouldEqual, session.PatSessionId)
 		updAS, err := as.UpdatePatSessionId()
+		So(err, ShouldBeNil)
 		So(updAS.PatSessionId, ShouldNotEqual, session.PatSessionId)
 	})
 }

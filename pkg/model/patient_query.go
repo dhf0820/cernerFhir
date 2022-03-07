@@ -63,6 +63,9 @@ func (pf *PatientFilter) CaPatientSearch() ([]*CAPatient, int, int64, int64, err
 	// pf.JWToken = SetTokenSession(pf.JWToken, sessId)
 
 	_, err = pf.FhirCaPatients() // Caches what it finds.
+	if err != nil {
+		log.Errorf("")
+	}
 
 	//fmt.Printf("Search Patients: %s\n", spew.Sdump(pats))
 	//pf.CountCachedCaPatients()

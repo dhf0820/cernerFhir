@@ -72,12 +72,12 @@ func Login(userName, password string) (string, error) {
 	session, err := GetSessionForUserID(user.ID)
 	if err != nil { // Session does not exist. Create new session for user
 		log.Info("Login:75 - No Session exists, creating")
-		session, err = CreateSessionForUser(&user)
+		_, err = CreateSessionForUser(&user)
 		if err != nil {
 			return "", fmt.Errorf("unable to create session - %s", err.Error())
 		}
 	} else {
-		//log.Info("Login:82 - UpdateAccessTime")
+
 		session.UpdateSessionAccessedAt()
 
 	}
@@ -114,7 +114,7 @@ func CreateToken(userid string) (string, error) {
 
 	id, err := nano_uuid.New()
 	if err != nil {
-		return "", fmt.Errorf("user:98 -- Could not generate uuid: %s\n", err.Error())
+		return "", fmt.Errorf("user:98 -- Could not generate uuid: %s", err.Error())
 	}
 	//Creating Session
 
@@ -191,12 +191,12 @@ func ExtractToken(r *http.Request) string {
 	return ""
 }
 
-func TokenValid(token *jwt.Token) error {
-	if _, ok := token.Claims.(jwt.Claims); !ok && !token.Valid {
-		return errors.New("token is invalid")
-	}
-	return nil
-}
+// func TokenValid(token *jwt.Token) error {
+// 	if _, ok := token.Claims.(jwt.Claims); !ok && !token.Valid {
+// 		return errors.New("token is invalid")
+// 	}
+// 	return nil
+// }
 
 //   func TokenValid(tkn *jwt.Token) error {
 // 	token, err := VerifyToken(r)
