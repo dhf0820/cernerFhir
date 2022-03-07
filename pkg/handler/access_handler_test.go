@@ -14,10 +14,10 @@ import (
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 
-	//fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
-	m "github.com/vsoftcorp/cernerFhir/pkg/model"
-	//h "github.com/vsoftcorp/cernerFhir/pkg/handler"
-	//m "github.com/vsoftcorp/cernerFhir/pkg/model"
+	//fhir "github.com/dhf0820/cernerFhir/fhirongo"
+	m "github.com/dhf0820/cernerFhir/pkg/model"
+	//h "github.com/dhf0820/cernerFhir/pkg/handler"
+	//m "github.com/dhf0820/cernerFhir/pkg/model"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

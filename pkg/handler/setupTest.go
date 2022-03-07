@@ -5,8 +5,8 @@ import (
 	//"github.com/davecgh/go-spew/spew"
 	log "github.com/sirupsen/logrus"
 	//"github.com/davecgh/go-spew/spew"
+	m "github.com/dhf0820/cernerFhir/pkg/model"
 	"github.com/joho/godotenv"
-	m "github.com/vsoftcorp/cernerFhir/pkg/model"
 
 	"os"
 )

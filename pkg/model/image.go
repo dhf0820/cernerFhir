@@ -11,7 +11,7 @@ import (
 	//"io/ioutil"
 	//"encoding/json"
 	//"time"
-	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
+	fhir "github.com/dhf0820/cernerFhir/fhirongo"
 )
 
 //Patient contains the cached and returned information for one patient

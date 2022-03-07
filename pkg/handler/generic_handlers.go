@@ -9,7 +9,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	m "github.com/vsoftcorp/cernerFhir/pkg/model"
+	m "github.com/dhf0820/cernerFhir/pkg/model"
 )
 
 //####################################### Structures #######################################

@@ -14,8 +14,8 @@ import (
 	"strings"
 	"testing"
 
-	//ca "github.com/vsoftcorp/cernerFhir/pkg/ca"
-	//m "github.com/vsoftcorp/cernerFhir/pkg/model"
+	//ca "github.com/dhf0820/cernerFhir/pkg/ca"
+	//m "github.com/dhf0820/cernerFhir/pkg/model"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

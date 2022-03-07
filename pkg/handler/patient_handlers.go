@@ -13,10 +13,10 @@ import (
 	"github.com/gorilla/schema"
 	log "github.com/sirupsen/logrus"
 
-	//"github.com/vsoftcorp/cernerFhir/pkg/common"
-	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
-	m "github.com/vsoftcorp/cernerFhir/pkg/model"
-	//fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
+	//"github.com/dhf0820/cernerFhir/pkg/common"
+	fhir "github.com/dhf0820/cernerFhir/fhirongo"
+	m "github.com/dhf0820/cernerFhir/pkg/model"
+	//fhir "github.com/dhf0820/cernerFhir/fhirongo"
 )
 
 //"gopkg.in/mgo.v2/bson"
@@ -35,13 +35,13 @@ type PatientResponse struct {
 }
 
 type PatientEmrAddResponse struct {
-	StatusCode	int             `json:"code"`
-	Message 	string          `json:"status"`
+	StatusCode int    `json:"code"`
+	Message    string `json:"status"`
 }
 type EmrPatient struct {
-	MRN 			string 	`json:"mrn"`  			// callers medical record number
-	PatientId 		string 	`json:"patient_id"`		// Fhir Patient Id
-	UserId 			string	`json:"user_id"`		// User ID Associated with the EMR
+	MRN       string `json:"mrn"`        // callers medical record number
+	PatientId string `json:"patient_id"` // Fhir Patient Id
+	UserId    string `json:"user_id"`    // User ID Associated with the EMR
 }
 
 type PatientRawCaResponse struct {
@@ -480,15 +480,15 @@ func GetPatient(w http.ResponseWriter, r *http.Request) {
 // 	WritePatientEncountersResponse(w, 200, encounters)
 // }
 
-
 func AddPatientEMR(w http.ResponseWriter, r *http.Request) {
 	resp := PatientEmrAddResponse{}
 	resp.StatusCode = 200
 	resp.Message = "OK"
-	WritePatientAddEmrResponse(w,  &resp)
+	WritePatientAddEmrResponse(w, &resp)
 	return
 
 }
+
 // func UpdateTokenCookie(cookie *http.Cookie) (*http.Cookie, error) {
 // 	token, err := m.VerifyTokenString(cookie.Value)
 // 	if err != nil {

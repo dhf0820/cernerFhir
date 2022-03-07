@@ -2,8 +2,8 @@ package handler
 
 import (
 	"net/http"
-	//_ "github.com/vsoftcorp/cernerFhir/docs"
-	//h "github.com/vsoftcorp/cernerFhir/pkg/handler"
+	//_ "github.com/dhf0820/cernerFhir/docs"
+	//h "github.com/dhf0820/cernerFhir/pkg/handler"
 )
 
 type Route struct {

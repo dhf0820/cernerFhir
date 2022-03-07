@@ -9,9 +9,9 @@ import (
 
 	//"io/ioutil"
 
+	m "github.com/dhf0820/cernerFhir/pkg/model"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
-	m "github.com/vsoftcorp/cernerFhir/pkg/model"
 )
 
 type ImageResponse []byte

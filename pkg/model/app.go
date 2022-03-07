@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"time"
 
-	//"github.com/vsoftcorp/cernerFhir/pkg/model"
+	//"github.com/dhf0820/cernerFhir/pkg/model"
 
-	"github.com/vsoftcorp/cernerFhir/pkg/storage"
-	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
+	"github.com/dhf0820/cernerFhir/pkg/storage"
+	fhir "github.com/dhf0820/cernerFhir/fhirongo"
 	"github.com/gorilla/mux"
 )
 

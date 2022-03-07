@@ -8,11 +8,11 @@ import (
 
 	//"time"
 
+	storage "github.com/dhf0820/cernerFhir/pkg/storage"
 	log "github.com/sirupsen/logrus"
-	storage "github.com/vsoftcorp/cernerFhir/pkg/storage"
 
 	//"time"
-	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
+	fhir "github.com/dhf0820/cernerFhir/fhirongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -393,12 +393,11 @@ func (df *DocumentFilter) GetFhirDocumentPage() ([]*fhir.Document, string, int64
 }
 
 // Get document by fhirId
-func FhirDocumentById(id string) (*fhir.Document, error){
+func FhirDocumentById(id string) (*fhir.Document, error) {
 	fDoc := &fhir.Document{}
 	filter := bson.M{"id": id}
 	findOneOptions := options.FindOneOptions{}
 
-	
 	collection, _ := storage.GetCollection("documents")
 	ctx := context.Background()
 	results := collection.FindOne(ctx, filter, &findOneOptions)

@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
+	fhir "github.com/dhf0820/cernerFhir/fhirongo"
 )
 
 type EMR struct {

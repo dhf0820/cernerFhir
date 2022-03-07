@@ -9,7 +9,7 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/vsoftcorp/cernerFhir/fhirongo"
+  name = "github.com/dhf0820/cernerFhir/fhirongo"
   packages = ["."]
   revision = "ad1e32d1f11fb72ff247e4685896e3fd526fae2b"
 

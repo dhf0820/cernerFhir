@@ -11,8 +11,8 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	//"os"
+	fhir "github.com/dhf0820/cernerFhir/fhirongo"
 	"github.com/gorilla/mux"
-	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	//"github.com/jingweno/conf"
@@ -20,7 +20,7 @@ import (
 	//"gopkg.in/mgo.v2"
 	//"net"
 
-	"github.com/vsoftcorp/cernerFhir/pkg/storage"
+	"github.com/dhf0820/cernerFhir/pkg/storage"
 	//"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

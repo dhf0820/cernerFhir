@@ -8,14 +8,14 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
+	fhir "github.com/dhf0820/cernerFhir/fhirongo"
 
-	//h "github.com/vsoftcorp/cernerFhir/pkg/handler"
+	//h "github.com/dhf0820/cernerFhir/pkg/handler"
 
 	//"github.com/davecgh/go-spew/spew"
+	"github.com/dhf0820/cernerFhir/pkg/ca"
+	m "github.com/dhf0820/cernerFhir/pkg/model"
 	. "github.com/smartystreets/goconvey/convey"
-	"github.com/vsoftcorp/cernerFhir/pkg/ca"
-	m "github.com/vsoftcorp/cernerFhir/pkg/model"
 )
 
 func TestSearchDocuments(t *testing.T) {

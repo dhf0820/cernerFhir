@@ -27,7 +27,7 @@
 
 [[constraint]]
   branch = "master"
-  name = "github.com/vsoftcorp/cernerFhir/fhirongo"
+  name = "github.com/dhf0820/cernerFhir/fhirongo"
 
 [[constraint]]
   name = "github.com/gorilla/mux"

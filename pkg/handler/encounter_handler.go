@@ -10,11 +10,11 @@ import (
 	//"github.com/davecgh/go-spew/spew"
 	log "github.com/sirupsen/logrus"
 	//"github.com/gorilla/mux"
+	ca "github.com/dhf0820/cernerFhir/pkg/ca"
+	m "github.com/dhf0820/cernerFhir/pkg/model"
 	"github.com/gorilla/schema"
-	ca "github.com/vsoftcorp/cernerFhir/pkg/ca"
-	m "github.com/vsoftcorp/cernerFhir/pkg/model"
 
-	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
+	fhir "github.com/dhf0820/cernerFhir/fhirongo"
 )
 
 type EncounterResponse struct {

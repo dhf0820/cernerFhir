@@ -1,8 +1,8 @@
-module github.com/vsoftcorp/cernerFhir
+module github.com/dhf0820/cernerFhir
 
 go 1.17
-replace github.com/vsoftcorp/cernerFhir => /Users/dhf/Dropbox/development/cernerFhir
 
+replace github.com/dhf0820/cernerFhir => /Users/dhf/Dropbox/development/cernerFhir
 
 require (
 	github.com/aidarkhanov/nanoid/v2 v2.0.5

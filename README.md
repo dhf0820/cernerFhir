@@ -15,14 +15,14 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
-git remote add origin https://github.com/vsoftcorp/cernerFhir.git
+git remote add origin https://github.com/dhf0820/cernerFhir.git
 git branch -M main
 git push -uf origin main
 ```
 
 ## Integrate with your tools
 
-- [ ] [Set up project integrations](https://gitlab.com/-/experiment/new_project_readme_content:4bcc01dc7a71d074f7fd14ef31c28231?https://github.com/vsoftcorp/cernerFhir/-/settings/integrations)
+- [ ] [Set up project integrations](https://gitlab.com/-/experiment/new_project_readme_content:4bcc01dc7a71d074f7fd14ef31c28231?https://github.com/dhf0820/cernerFhir/-/settings/integrations)
 
 ## Collaborate with your team
 

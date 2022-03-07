@@ -16,13 +16,13 @@ import (
 
 	//"net/url"
 	//"github.com/davecgh/go-spew/spew"
+	fhir "github.com/dhf0820/cernerFhir/fhirongo"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
-	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
 
-	//"github.com/vsoftcorp/cernerFhir/pkg/model"
-	"github.com/vsoftcorp/cernerFhir/pkg/ca"
-	m "github.com/vsoftcorp/cernerFhir/pkg/model"
+	//"github.com/dhf0820/cernerFhir/pkg/model"
+	"github.com/dhf0820/cernerFhir/pkg/ca"
+	m "github.com/dhf0820/cernerFhir/pkg/model"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -61,9 +61,9 @@ type DocumentResponse struct {
 }
 
 type DocumentsEmrAddResponse struct {
-	Count 		int 			`json:"count"`
-	StatusCode	int             `json:"code"`
-	Message 	string          `json:"status"`
+	Count      int    `json:"count"`
+	StatusCode int    `json:"code"`
+	Message    string `json:"status"`
 }
 
 func WriteDocumentResponse(w http.ResponseWriter, resp *DocumentResponse) error {

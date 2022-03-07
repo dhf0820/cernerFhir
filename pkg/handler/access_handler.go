@@ -15,7 +15,7 @@ import (
 	//"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
 	//"github.com/dgrijalva/jwt-go"
-	m "github.com/vsoftcorp/cernerFhir/pkg/model"
+	m "github.com/dhf0820/cernerFhir/pkg/model"
 )
 
 type LoginFilter struct {

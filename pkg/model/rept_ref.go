@@ -16,9 +16,9 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 
+	fhir "github.com/dhf0820/cernerFhir/fhirongo"
+	"github.com/dhf0820/cernerFhir/pkg/storage"
 	log "github.com/sirupsen/logrus"
-	fhir "github.com/vsoftcorp/cernerFhir/fhirongo"
-	"github.com/vsoftcorp/cernerFhir/pkg/storage"
 
 	// "go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
