@@ -34,6 +34,16 @@ type PatientResponse struct {
 	Patient  *fhir.Patient   `json:"patient"`
 }
 
+type PatientEmrAddResponse struct {
+	StatusCode	int             `json:"code"`
+	Message 	string          `json:"status"`
+}
+type EmrPatient struct {
+	MRN 			string 	`json:"mrn"`  			// callers medical record number
+	PatientId 		string 	`json:"patient_id"`		// Fhir Patient Id
+	UserId 			string	`json:"user_id"`		// User ID Associated with the EMR
+}
+
 type PatientRawCaResponse struct {
 	Patients []*m.CAPatient `json:"patients"`
 	Patient  *m.CAPatient   `json:"patient"`
@@ -78,6 +88,20 @@ func WritePatientResponse(w http.ResponseWriter, statusCode int, resp *PatientRe
 }
 
 func WritePatientCaResponse(w http.ResponseWriter, resp *PatientCaResponse) error {
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Printf("WritePatientCaResponse:80 -- statusCode: %d\n", resp.StatusCode)
+	//w.WriteHeader()
+	w.WriteHeader(resp.StatusCode)
+	err := json.NewEncoder(w).Encode(resp)
+	if err != nil {
+		fmt.Println("Error marshaling JSON:", err)
+		return err
+
+	}
+	return nil
+}
+
+func WritePatientAddEmrResponse(w http.ResponseWriter, resp *PatientEmrAddResponse) error {
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Printf("WritePatientCaResponse:80 -- statusCode: %d\n", resp.StatusCode)
 	//w.WriteHeader()
@@ -456,6 +480,15 @@ func GetPatient(w http.ResponseWriter, r *http.Request) {
 // 	WritePatientEncountersResponse(w, 200, encounters)
 // }
 
+
+func AddPatientEMR(w http.ResponseWriter, r *http.Request) {
+	resp := PatientEmrAddResponse{}
+	resp.StatusCode = 200
+	resp.Message = "OK"
+	WritePatientAddEmrResponse(w,  &resp)
+	return
+
+}
 // func UpdateTokenCookie(cookie *http.Cookie) (*http.Cookie, error) {
 // 	token, err := m.VerifyTokenString(cookie.Value)
 // 	if err != nil {

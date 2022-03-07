@@ -4,10 +4,22 @@ import (
 	"fmt"
 	"testing"
 	"time"
-	//"github.com/davecgh/go-spew/spew"
-	//"github.com/davecgh/go-spew/spew"
+	"github.com/davecgh/go-spew/spew"
+
 	. "github.com/smartystreets/goconvey/convey"
 )
+
+
+func TestFhirDocumentById(t *testing.T) {
+	setupTest("")
+	Convey("FhirDocumentById", t, func() {
+		doc, err := FhirDocumentById("197588922")
+		So(err, ShouldBeNil)
+		So(doc, ShouldNotBeNil)
+		fmt.Printf("Doc: %s\n", spew.Sdump(doc))
+	})
+}
+
 
 func TestSearchReports(t *testing.T) {
 	as := setupTest("")

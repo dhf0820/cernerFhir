@@ -43,9 +43,9 @@ import (
 
 //Does not return anything. THis just fills the cache if necessary
 func (df *DocumentFilter) GetFhirDocRefs() {
-	//fmt.Printf("\n\n////////////////////////  GetFhirDocRefs ////////////////////////////////\n")
+	fmt.Printf("\n////////////////////////  GetFhirDocRefs ////////////////////////////////\n")
 	// c := config.Fhir()
-	log.Debugf("FindFhirDocRefs is searching DocumentReferences for Patient: %s", df.PatientGPI)
+	log.Debugf("GetFhirDocRefs is searching DocumentReferences for Patient: %s", df.PatientGPI)
 	//returns cacheStatus, pagesInCache, totalInCache, error
 
 	// _, _, totalInCache, _ := df.DocumentCacheStats()

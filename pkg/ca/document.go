@@ -70,6 +70,7 @@ func WriteCaDocumentResponse(w http.ResponseWriter, resp *CaDocumentResponse) er
 }
 
 func FhirDocumentsToCA(w http.ResponseWriter, total, pages, inPage, page int64, cacheStatus string, fDocs []*fhir.Document) {
+	fmt.Printf("\n################################ FhirDocumentsToCa ##############################################\n")
 	caDocuments := FhirDocsToCa(fDocs)
 	resp := CaDocumentResponse{}
 	resp.StatusCode = 200
@@ -127,7 +128,7 @@ func FhirDocumentToCA(fd *fhir.Document) *CADocument {
 
 	switch fd.ResourceType {
 	case "DiagnosticReport":
-		caDoc.Category = fd.Category.Text
+		caDoc.Category = fd.ResourceType
 		caDoc.Class = fd.Code.Text
 		//fmt.Printf("DiagnosticReport: id: %s  - %s\n", fd.ID, spew.Sdump(fd.PresentedForm))
 		caDoc.ImageURL = ExtractDiagnosticImage(fd.PresentedForm, "application/pdf")

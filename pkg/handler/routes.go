@@ -83,6 +83,18 @@ var routes = Routes{
 		"/api/rest/v1/image/{id}",
 		GetImage,
 	},
+	Route{
+		"AddDocumentsToEMR",
+		"POST",
+		"/api/rest/v1/documents/emr_save",
+		AddEmrDocuments,
+	},
+	Route{
+		"AddPatientToEMR",
+		"POST",
+		"/api/rest/v1/patient/emr_save",
+		AddPatientEMR,
+	},
 	// Route{
 	// 	"PatientDocuments",
 	// 	"GET",

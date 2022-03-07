@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -59,6 +60,12 @@ type DocumentResponse struct {
 	Document     *fhir.Document   `json:"document"`
 }
 
+type DocumentsEmrAddResponse struct {
+	Count 		int 			`json:"count"`
+	StatusCode	int             `json:"code"`
+	Message 	string          `json:"status"`
+}
+
 func WriteDocumentResponse(w http.ResponseWriter, resp *DocumentResponse) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(resp.StatusCode)
@@ -82,16 +89,60 @@ func WriteCADocumentResponse(w http.ResponseWriter, resp *DocumentResponse) erro
 	return nil
 }
 
+func WriteEmrAddDocumentResponse(w http.ResponseWriter, resp *DocumentsEmrAddResponse) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(resp.StatusCode)
+	err := json.NewEncoder(w).Encode(resp)
+	if err != nil {
+		fmt.Println("Error marshaling JSON:", err)
+		return err
+	}
+	return nil
+}
+
 func SessionDocuments(w http.ResponseWriter, r *http.Request) {
 }
 
 ////////////////////////////////////////  Handlers //////////////////////////////////////////////////
+func AddEmrDocuments(w http.ResponseWriter, r *http.Request) {
+	//fmt.Printf("#####################################DocumentEmrAdd ################################\n")
+	log.Infof("###Raw QueryDocument query: %s", r.URL.RawQuery)
+	resp := DocumentsEmrAddResponse{}
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		resp.StatusCode = 400
+		resp.Message = err.Error()
+		WriteEmrAddDocumentResponse(w, &resp)
+		return
+	}
+	docs := &m.EmrDocuments{}
+
+	err = json.Unmarshal(body, docs)
+	if err != nil {
+		resp.StatusCode = 400
+		resp.Message = err.Error()
+		WriteEmrAddDocumentResponse(w, &resp)
+		return
+	}
+	cnt, err := m.AddDocumentsToEMR(docs)
+	if err != nil {
+		resp.StatusCode = 400
+		resp.Message = err.Error()
+		resp.Count = 0
+
+	} else {
+		resp.StatusCode = 200
+		resp.Message = "Ok"
+		resp.Count = cnt
+	}
+	WriteEmrAddDocumentResponse(w, &resp)
+}
 
 func QueryDocuments(w http.ResponseWriter, r *http.Request) {
 	//fmt.Printf("#####################################QueryDocuments ################################\n")
 	log.Infof("###Raw QueryDocument query: %s", r.URL.RawQuery)
 	docFilter, err := SetupDocumentFilter(r)
-	fmt.Printf("DocFinter:93 -- %s\n", spew.Sdump(docFilter))
+	fmt.Printf("DocFilter:145 -- %s\n", spew.Sdump(docFilter))
 	// log.Debugf("QueryDocuments handler")
 	// if r.Header.Get("AUTHORIZATION") == "" {
 	// 	resp := CADocumentResponse{}
@@ -122,7 +173,7 @@ func QueryDocuments(w http.ResponseWriter, r *http.Request) {
 	//docFilter, err := SetupDocumentFilter(r)
 
 	if err != nil {
-		log.Errorf("SetupDocumentFilter:120 -- failed: %s", err.Error())
+		log.Errorf("SetupDocumentFilter:176 -- failed: %s", err.Error())
 		// as := m.AuthSession{Token: r.Header.Get("AUTHORIZATION")}
 		// as.CreateSession()
 		// docFilter, err = SetupDocumentFilter(r)
@@ -147,7 +198,7 @@ func QueryDocuments(w http.ResponseWriter, r *http.Request) {
 		docFilter.PatientGPI = docFilter.PatientID
 	}
 	if docFilter.Cache == "stats" { // Retrieve from cache only
-		log.Debugf("DocumentHandler:148 -- querying stats")
+		log.Debugf("DocumentHandler:201 -- querying stats")
 		cacheStatus, pagesInCache, totalInCache, _ := docFilter.DocumentCacheStats()
 		total := totalInCache //pf.CountCachedCaPatients()
 		resp := DocumentResponse{}
@@ -168,11 +219,11 @@ func QueryDocuments(w http.ResponseWriter, r *http.Request) {
 			resp := DocumentResponse{}
 			//resp.CacheStatus = docFilter.Session.GetDocumentStatus()
 			resp.StatusCode = 400
-			resp.Message = fmt.Sprintf("DocumentsInCache:168 -- err: %s", err.Error())
+			resp.Message = fmt.Sprintf("DocumentsInCache:222 -- err: %s", err.Error())
 			WriteCADocumentResponse(w, &resp)
 			return
 		}
-		log.Infof("QueryDocuments:172 -- %d in cache", inCache)
+		log.Infof("QueryDocumen226 -- %d in cache", inCache)
 	}
 	if docFilter.Page == 0 {
 		docFilter.Page = 1
@@ -186,7 +237,7 @@ func QueryDocuments(w http.ResponseWriter, r *http.Request) {
 		WriteCADocumentResponse(w, &resp)
 		return
 	}
-	log.Infof("QueryDocuments:176 -- %d in cache", inCache)
+	log.Infof("QueryDocuments:240 -- %d in cache", inCache)
 	//log.Debugf("QueryDocuments:177 -- DocFilter: %s\n", spew.Sdump(docFilter))
 	docFilter.SearchReports()
 	if docFilter.Page == 0 {
@@ -205,10 +256,10 @@ func QueryDocuments(w http.ResponseWriter, r *http.Request) {
 	}
 	//fmt.Printf("\nFhirDocuments: %s\n\n", spew.Sdump(fhirDocs))
 	if docFilter.ResultFormat == "ca" {
-		log.Infof("QueryDocuments:181 -- CacheStatus: %s", cacheStatus)
-		log.Infof("QueryDocuments:182 -- TotalInCache: %d", totalInCache)
-		log.Infof("QueryDocuments:183 -- PagesInCache: %d", pagesInCache)
-		log.Infof("QueryDocuments:187 -- ElapsedTime: %f seconds", elapsedTime.Seconds())
+		log.Infof("QueryDocuments:259 -- CacheStatus: %s", cacheStatus)
+		log.Infof("QueryDocuments:260 -- TotalInCache: %d", totalInCache)
+		log.Infof("QueryDocuments:261 -- PagesInCache: %d", pagesInCache)
+		log.Infof("QueryDocuments:262 -- ElapsedTime: %f seconds", elapsedTime.Seconds())
 		ca.FhirDocumentsToCA(w, totalInCache, pagesInCache, numberInPage, docFilter.Page, cacheStatus, fhirDocs)
 		// //fmt.Printf("\n\n\n   ### Requesting cached page %d\n", docFilter.Page)
 		// // fhirDocs, cacheStatus, numberInPage, pagesInCache, totalInCache, err := docFilter.GetFhirDocumentPage()

@@ -113,7 +113,7 @@ type DocumentImage struct {
 //var activeDocumentFilter *DocumentFilter
 
 func (df *DocumentFilter) FindFhirDiagRepts() {
-	fmt.Printf("####################FindFhirDiagReports is searching DiagnosticReports for Patient: %s#############\n", df.PatientGPI)
+	fmt.Printf("\n####################FindFhirDiagReports is searching DiagnosticReports for Patient: %s#############\n\n", df.PatientGPI)
 	_, _, totalInCache, _ := df.DocumentCacheStats()
 	cacheStatus := df.Session.GetDiagReptStatus()
 	//If the cacheStatus == done and there are some documents in cache we are done
@@ -138,7 +138,7 @@ func (df *DocumentFilter) FindFhirDiagRepts() {
 }
 
 func (df *DocumentFilter) CacheFhirDiagRepts() {
-	fmt.Printf("##################### CacheFhirDiagRepts ################################\n")
+	fmt.Printf("\n##################### CacheFhirDiagRepts ################################\n")
 	c := config.Fhir()
 	//caching needs to be started.
 	df.MakeFhirQuery()

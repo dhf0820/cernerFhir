@@ -6,7 +6,6 @@ import (
 	//"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-
 // Address is a physical address
 type Address struct {
 	Use        string   `json:"use" bson:"use"`
@@ -19,27 +18,27 @@ type Address struct {
 }
 
 // Attachment is a url attachment
-type Attachment struct 	{
-	ContentType string 	`json:"contentType" bson:"cont_type"`
-	Language	string	`json:"language"`
-	Data 		base64Binary 	`json:"base64binary"`
-	URL         string 	`json:"url"`
-	Title		string	`json:"title"`
+type Attachment struct {
+	ContentType string       `json:"contentType" bson:"cont_type"`
+	Language    string       `json:"language"`
+	Data        base64Binary `json:"base64binary"`
+	URL         string       `json:"url"`
+	Title       string       `json:"title"`
 }
 
 type BackboneElement struct {
-	Type       []CodeableConcept	`json:"codeable_concept" bson:"codeable_concept"`
-	Period     Period				`json:"period"`
-	Individual Person				`json:"person"`
+	Type       []CodeableConcept `json:"codeable_concept" bson:"codeable_concept"`
+	Period     Period            `json:"period"`
+	Individual Person            `json:"person"`
 }
 
-type base64Binary	string
+type base64Binary string
 
 type BinaryContent struct {
-	Attachment	struct {
-		ContentType		string 		`bson:"content_type" json:"contentType"`
-		URL				string 		`bson:"url" json:"url"`
-	}								`bson:"attachment" json:"attachment"`
+	Attachment struct {
+		ContentType string `bson:"content_type" json:"contentType"`
+		URL         string `bson:"url" json:"url"`
+	} `bson:"attachment" json:"attachment"`
 }
 
 // Bundle is the header for sets of information
@@ -66,11 +65,11 @@ type CodeableConcept struct {
 
 // Coding is a code and system
 type Coding struct {
-	System  string `json:"system"`
-	Version string `json:"version"`
-	Code    string `json:"code"`
-	Display string `json:"display"`
-	UserSelected bool `json:"userSelected" bson:"user_selected"`
+	System       string `json:"system"`
+	Version      string `json:"version"`
+	Code         string `json:"code"`
+	Display      string `json:"display"`
+	UserSelected bool   `json:"userSelected" bson:"user_selected"`
 }
 
 // CodeText is a healthcare condition
@@ -107,9 +106,6 @@ type Context struct {
 
 // Concept is a general concept such as language
 
-
-
-
 type ContactPointSystem int
 type ContactPointUse int
 type DaysOfWeek int
@@ -133,8 +129,8 @@ type EncounterContext struct {
 	Encounter struct {
 		Reference string `json:"reference"`
 	} `json:"encounter"`
-	Period Period 		`json:"period"`
-} 
+	Period Period `json:"period"`
+}
 
 //EncounterReference of the report
 type EncounterReference struct {
@@ -143,10 +139,10 @@ type EncounterReference struct {
 
 // Entry are the common entry fields
 type Entry struct {
-	FullURL string     `json:"fullUrl"`
-// 	Resource Resource  `json:"resource"`
-	Link    []Link     `json:"link"`
-	Search  SearchMode `json:"search"`
+	FullURL string `json:"fullUrl"`
+	// 	Resource Resource  `json:"resource"`
+	Link   []Link     `json:"link"`
+	Search SearchMode `json:"search"`
 }
 
 // EntryPartial are the common entry fields
@@ -188,8 +184,9 @@ type Identifier struct {
 
 type Individual struct {
 	Reference string `json:"reference"`
-	Display string 	 `json:"display"`
+	Display   string `json:"display"`
 }
+
 // Issue is a FHIR issue
 type Issue struct {
 	Severity string   `json:"severity"`
@@ -289,18 +286,18 @@ type Narrative struct {
 
 type NarrativeStatus string
 
-// Note is a note
+// Note is any general note on some other component
 type Note struct {
 	Text string `json:"text"`
 }
 
 type Participant struct {
-	Id 					*string 	`json:"id,omitempty" bson:"id,omitempty"`
-	Extension			[]Extension	`json:"extension,omitempty" bson:"extension,omitempty"`
-	ModifierExtension 	[]Extension	`json:"modifierExtension,omitempty" bson:"modifierExtension,omitempty"`
-	Type 		   *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`
-	Period 				Period		`json:"period" bson:"period"`
-	Individual			*Reference	`json:"reference,omitempty" bson:"reference,omitempty"` 						
+	Id                *string          `json:"id,omitempty" bson:"id,omitempty"`
+	Extension         []Extension      `json:"extension,omitempty" bson:"extension,omitempty"`
+	ModifierExtension []Extension      `json:"modifierExtension,omitempty" bson:"modifierExtension,omitempty"`
+	Type              *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`
+	Period            Period           `json:"period" bson:"period"`
+	Individual        *Reference       `json:"reference,omitempty" bson:"reference,omitempty"`
 }
 
 // Period is a period of time
@@ -333,9 +330,9 @@ type Reason struct {
 }
 
 type Reference struct {
-	Reference  string `json:"reference"`
+	Reference  string     `json:"reference"`
 	Identifier Identifier `json:"identifier"`
-	Display    string `json:"display"`
+	Display    string     `json:"display"`
 }
 
 // Repeat is a time based repeat of something

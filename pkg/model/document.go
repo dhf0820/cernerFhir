@@ -123,7 +123,7 @@ func (df *DocumentFilter) SearchReports() ([]*fhir.Document, string, int64, int6
 
 	// Fill the Cache
 	//fmt.Printf("\n\n#### Calling GetDiagnosticRept\ns")
-	df.FindFhirDiagRepts()
+	go df.FindFhirDiagRepts()
 
 	// Start GetDocRef
 	//fmt.Printf("\n\n### Calling DocumentReferences\n\n")
@@ -288,6 +288,7 @@ func (df *DocumentFilter) CountCachedFhirDocuments() (int64, error) {
 // GetFhirDocumentPage: returns fDocs, cacheStatus, int64(len(fDocs)), pagesInCache, totalInCache, error
 
 func (df *DocumentFilter) GetFhirDocumentPage() ([]*fhir.Document, string, int64, int64, int64, error) {
+	fmt.Printf("GetFhirDocumentPage:291")
 	var linesPerPage int64 = LinesPerPage()
 	var skip int64 = 0
 	//var caDocs []*CADocument
@@ -297,12 +298,12 @@ func (df *DocumentFilter) GetFhirDocumentPage() ([]*fhir.Document, string, int64
 	cacheFilter := bson.M{}
 
 	if df.Limit > 0 {
-		//fmt.Printf("GetFhirDocumentPage:780 - setting linesPerPage: %d\n", df.Limit)
+		//fmt.Printf("GetFhirDocumentPage:301 - setting linesPerPage: %d\n", df.Limit)
 		linesPerPage = df.Limit
 	}
 	if df.Page > 0 {
 		skip = (df.Page - 1) * linesPerPage
-		//fmt.Printf("GetFhirDocumentPage:785 -- setting skip: %d\n", skip)
+		//fmt.Printf("GetFhirDocumentPage:306 -- setting skip: %d\n", skip)
 	}
 	if df.Skip > 0 {
 		skip = df.Skip
@@ -312,16 +313,16 @@ func (df *DocumentFilter) GetFhirDocumentPage() ([]*fhir.Document, string, int64
 	fmt.Println("###")
 	fmt.Println()
 	mq = append(mq, bson.M{"subject.reference": "Patient/" + df.PatientGPI})
-	log.Debugf("GetFhirDocumentPage:305 -- mq: %v", mq)
+	log.Debugf("GetFhirDocumentPage:316 -- mq: %v", mq)
 	if df.EncounterID != "" {
 		mq = append(mq, bson.M{"context.encounter.reference": "Encounter/" + df.EncounterID})
-		log.Debugf("GetFhirDocumentPage:307 -- mq: %v", mq)
+		log.Debugf("GetFhirDocumentPage:319 -- mq: %v", mq)
 	}
 	if len(mq) > 1 {
 
 		cacheFilter = bson.M{"$and": mq}
 	}
-	log.Debugf("GetFhirDocumentPage:312 -- filter: %v", cacheFilter)
+	log.Debugf("GetFhirDocumentPage:325 -- filter: %v", cacheFilter)
 	findOptions := options.Find()
 	findOptions.SetLimit(linesPerPage)
 	findOptions.SetSkip(skip)
@@ -352,56 +353,73 @@ func (df *DocumentFilter) GetFhirDocumentPage() ([]*fhir.Document, string, int64
 	}
 	findOptions.SetSort(sortFields)
 
-	log.Debugf("GeFhirDocumentPage:343 - cacheFilter: %v", cacheFilter)
+	log.Debugf("GeFhirDocumentPage:356 - cacheFilter: %v", cacheFilter)
 
 	findOptions.SetSort(sortFields)
-	log.Debugf("GetFhirDocumentPage:346-- sort: %v", sortFields)
+	log.Debugf("GetFhirDocumentPage:359-- sort: %v", sortFields)
 	collection, _ := storage.GetCollection("documents")
 	ctx := context.Background()
 	cursor, err := collection.Find(ctx, cacheFilter, findOptions)
 	if err != nil {
-		log.Debugf("GetFhirDocumentPage:351 for filter: %s returned error: %s\n", cacheFilter, err.Error())
+		log.Debugf("GetFhirDocumentPage364 for filter: %s returned error: %s\n", cacheFilter, err.Error())
 		return nil, "", 0, 0, 0, err
 	}
 	defer func() {
 		if err := cursor.Close(ctx); err != nil {
-			log.WithError(err).Warnf("GetFhirDocumentPage:356 -- Got error while closing Document cursor: %s", err.Error())
+			log.WithError(err).Warnf("GetFhirDocumentPage:369 -- Got error while closing Document cursor: %s", err.Error())
 		}
 	}()
 	for cursor.Next(ctx) {
 		var fDoc fhir.Document
 		err = cursor.Decode(&fDoc)
 		if err != nil {
-			log.WithError(err).Warnf("GetFhirDocumentPage:363 -- Got error while closing cursor: %s", err.Error())
+			log.WithError(err).Warnf("GetFhirDocumentPage:376 -- Got error while closing cursor: %s", err.Error())
 			return nil, "", 0, 0, 0, err
 		}
 		fDocs = append(fDocs, &fDoc)
 	}
-	//log.Debugf("GetFhirDocumentPage:363 -- Finished fetching %d documents from cursor", len(fDocs))
+	//log.Debugf("GetFhirDocumentPage:381 -- Finished fetching %d documents from cursor", len(fDocs))
 	//cursor.Close(context.TODO())
 	if len(fDocs) == 0 {
-		log.Infof("GetFhirDocumentPage:371 -- no Documents found for %s", cacheFilter)
+		log.Infof("GetFhirDocumentPage384 -- no Documents found for %s", cacheFilter)
 
 	}
 	//else {
-	// 	log.Debugf("GetFhirDocumentPage:374 -- GetQueryDiagCache found %d documents \n", len(fDocs))
+	// 	log.Debugf("GetFhirDocumentPage:388 -- GetQueryDiagCache found %d documents \n", len(fDocs))
 	// }
 	cacheStatus, pagesInCache, totalInCache, err := df.DocumentCacheStats()
 	return fDocs, cacheStatus, int64(len(fDocs)), pagesInCache, totalInCache, err
 
 }
 
+// Get document by fhirId
+func FhirDocumentById(id string) (*fhir.Document, error){
+	fDoc := &fhir.Document{}
+	filter := bson.M{"id": id}
+	findOneOptions := options.FindOneOptions{}
+
+	
+	collection, _ := storage.GetCollection("documents")
+	ctx := context.Background()
+	results := collection.FindOne(ctx, filter, &findOneOptions)
+	if results.Err() != nil {
+		return nil, results.Err()
+	}
+	err := results.Decode(fDoc)
+	return fDoc, err
+}
+
 //DocumentCacheStats returns cacheStatus, pagesInCache, totalInCache, error
 func (df *DocumentFilter) DocumentCacheStats() (string, int64, int64, error) {
 	totalInCache, err := df.DocumentsInCache()
 	if err != nil {
-		msg := fmt.Sprintf("DocumentCacheStats:385 -- err: %s", err.Error())
+		msg := fmt.Sprintf("DocumentCacheStats:399 -- err: %s", err.Error())
 		return "", 0, 0, errors.New(msg)
 	}
 	pageSize := LinesPerPage()
 	pagesInCache, _ := CalcPages(totalInCache, pageSize)
 	//pages := inCache/pageSize
-	log.Debugf("DocumentCacheStats:391 -- pageSize: %d  InCache: %d, pagesInCaches: %d", pageSize, totalInCache, pagesInCache)
+	log.Debugf("DocumentCacheStats:405 -- pageSize: %d  InCache: %d, pagesInCaches: %d", pageSize, totalInCache, pagesInCache)
 	cacheStatus := df.Session.GetDocumentStatus()
 	return cacheStatus, pagesInCache, totalInCache, nil
 }
@@ -414,7 +432,7 @@ func (df *DocumentFilter) DocumentPagesInCache() (int64, error) {
 	pageSize := LinesPerPage()
 	pagesInCache, _ := CalcPages(numInCache, pageSize)
 	//pages := inCache/pageSize
-	log.Debugf("DocumentPagesInCache:404 -- pageSize: %d  InCache: %d, pagesInCaches: %d", pageSize, numInCache, pagesInCache)
+	log.Debugf("DocumentPagesInCache:418 -- pageSize: %d  InCache: %d, pagesInCaches: %d", pageSize, numInCache, pagesInCache)
 	return int64(pagesInCache), nil
 }
 
@@ -423,16 +441,16 @@ func (df *DocumentFilter) DocumentsInCache() (int64, error) {
 	//filter := bson.M{"$and": mq}
 	c, err := storage.GetCollection("documents")
 	if err != nil {
-		log.Errorf("DocumentsInCache:413 -- Settng Collection(%s) failed: %s", "documents", err.Error())
+		log.Errorf("DocumentsInCache:4427 -- Settng Collection(%s) failed: %s", "documents", err.Error())
 	}
 	filter := bson.M{"subject.reference": "Patient/" + df.PatientGPI}
-	log.Infof("DocumentsInCache:416 For Patient matching: [%v]\n", filter)
+	log.Infof("DocumentsInCache:430 For Patient matching: [%v]\n", filter)
 	count, err := c.CountDocuments(context.TODO(), filter)
 	if err != nil {
-		log.Errorf("DocumentInCache:414  Count returned error: %s\n", err.Error())
+		log.Errorf("DocumentInCache:433  Count returned error: %s\n", err.Error())
 		return 0, err
 	}
-	//log.Debugf("DocumentsInCache:417 -- Counted %d documents", count)
+	//log.Debugf("DocumentsInCache:436 -- Counted %d documents", count)
 	return count, nil
 }
 
@@ -441,10 +459,10 @@ func DeleteDocuments(patientID string) error {
 	//log.Infof("Deleting Documents:423 -- for Patient: %s", patientID)
 	col, _ := storage.GetCollection("documents")
 	filter := bson.M{"subject.reference": "Patient/" + patientID}
-	log.Debugf("DeleteDocument:431 -- bson filter delete: %v\n", filter)
+	log.Debugf("DeleteDocument445 -- bson filter delete: %v\n", filter)
 	res, err := col.DeleteMany(context.Background(), filter)
 	if err != nil {
-		log.Errorf("DeleteDocuments:434 -- for patientID %s failed: %v", filter, err)
+		log.Errorf("DeleteDocuments:448 -- for patientID %s failed: %v", filter, err)
 		return err
 	}
 	fmt.Printf("\nDeleted %d documents\n", res.DeletedCount)
