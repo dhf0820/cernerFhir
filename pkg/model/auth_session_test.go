@@ -17,8 +17,8 @@ func TestDeleteAuthSession(t *testing.T) {
 		So(as.ID, ShouldNotEqual, primitive.NilObjectID)
 		session := as
 		session, err := ValidateAuth("test")
-		fmt.Printf("validated session: %s\n", session.SessionID)
-		fmt.Printf("ooriginal session: %s\n", as.SessionID)
+		// fmt.Printf("validated session: %s\n", session.SessionID)
+		// fmt.Printf("ooriginal session: %s\n", as.SessionID)
 		So(err, ShouldBeNil)
 		So(session, ShouldNotBeNil)
 		err = session.Delete()
