@@ -64,7 +64,7 @@ type DocumentSummary struct {
 	UpdatedAt    *time.Time         `json:"updated_at" bson:"updated_at"`
 	AccessedAt   *time.Time         `json:"accessed_at" bson:"accessed_at"`
 	ImageURL     string             `json:"image_url" bson:"image_url"`
-	FhirImageURL string             `json:"fhir_image_url" bson:fhir_&image_url`
+	FhirImageURL string             `json:"fhir_image_url" bson:"fhir_&image_url"`
 	Images       []PresentedForm    `json:"images" bson:"images"`
 	Image        string             `json:"image" bson:"image"` // base64
 	Versionid    uint64             `json:"version_id" bson:"version_id"`

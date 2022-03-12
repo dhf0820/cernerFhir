@@ -75,7 +75,7 @@ type CAPatient struct {
 	PatientGPI    string             `json:"patient_gpi"`
 	Name          string             `json:"name"`
 	FirstName     string             `json:"given" bson:"firstname"`
-	MiddleName    string             `json:"middle_name" bson:"middlename:`
+	MiddleName    string             `json:"middle_name" bson:"middlename"`
 	LastName      string             `json:"family" bson:"lastname"`
 	Text          string             `json:"text"`
 	BirthDate     *time.Time         `json:"birth_date"`

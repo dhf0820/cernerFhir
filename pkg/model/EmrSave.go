@@ -1,16 +1,22 @@
 package model
+
 import (
 	log "github.com/sirupsen/logrus"
 )
 
 type EmrDocuments struct {
-	DocumentIds 		[]string 	`json:"document_ids"`
-	EmrMRN				string 		`json:"emr_mrn"`
-	UserId 				string 		`json:"user_id"`
+	DocumentIds []string `json:"document_ids"`
+	EmrMRN      string   `json:"emr_mrn"`
+	UserId      string   `json:"user_id"`
 }
 
+type EmrPatient struct {
+	FhirPatientID string `json:"fhir_patient_id"`
+	EmrMRN        string `json:"emr_mrn"`
+	UserId        string `json:"user_id"`
+}
 
-func AddDocumentsToEMR(emrDocs *EmrDocuments) (int, error){
+func AddDocumentsToEMR(emrDocs *EmrDocuments) (int, error) {
 	// mrn := emrDocs.EmrMRN
 	// userId := emrDocs.UserId
 	for _, docId := range emrDocs.DocumentIds {
